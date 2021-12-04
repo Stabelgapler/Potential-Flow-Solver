@@ -17,15 +17,6 @@
 //window coordinate transform
 
 
-void change_flow(Uniform* flow) //Changes Uniform flow y-velocity every frame
-{
-    static double de_vel = Settings::uniform_flow_change_step; //Velocity change increment
-
-    flow->y_vel += de_vel;
-
-    if(abs(flow->y_vel) >= Settings::uniform_flow_max_y_val){de_vel = -de_vel;}
-}
-
 int main()
 {   
     Settings::initialize("../settings.dat");
@@ -89,7 +80,7 @@ int main()
             Calculations::draw_streamline(window, Calculations::integrate_streamline(100, -50 + u*30, 700, 5));
         }
 
-        change_flow(dynamic_cast<Uniform*>(Source::Source_List[0])); //Change uniform inflow
+        dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow
 
         Source::remove_sources(1); //Remove panel-source-solution for next frame
 

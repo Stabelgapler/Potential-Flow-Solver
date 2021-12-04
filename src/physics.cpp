@@ -5,6 +5,7 @@
 
 #include "physics.hpp"
 #include "linalg.hpp"
+#include "utility.hpp"
 
 
 std::vector<Source *> Source::Source_List;
@@ -88,6 +89,15 @@ void Uniform::superpose_velocity(Vector_Field& field)
     }
 
     return;
+}
+
+void Uniform::change_flow() //Changes Uniform flow y-velocity every frame
+{
+    static double de_vel = Settings::uniform_flow_change_step; //Velocity change increment
+
+    this->y_vel += de_vel;
+
+    if(abs(this->y_vel) >= Settings::uniform_flow_max_y_val){de_vel = -de_vel;}
 }
 
 

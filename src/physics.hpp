@@ -5,6 +5,7 @@
 
 #include "linalg.hpp"
 
+
 class Source
 {
     public:
@@ -31,6 +32,8 @@ class Uniform: public Source
 
     double* calc_velocity(double pos[]);
     void superpose_velocity(Vector_Field& field);
+
+    void change_flow();
 };
 
 class Point: public Source
