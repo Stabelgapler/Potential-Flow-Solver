@@ -1,0 +1,13 @@
+#In this file, sources can be added manually. This function disturbs the calculated panel solution if a body is used!
+#Comments start with a "#"
+
+#Some Examples:
+#Point-Sources: double x_pos, y_pos, flow
+#Point-Source:300;225;80;
+#Point-Source:485;265;-80;
+
+#Vortex-Sources: double x_pos, y_pos, vorticity
+#Vortex-Source:400;250;150;
+
+#Doublet-Sources: double x_pos, y_pos, intensity
+#Doublet-Source:400;250;20000;

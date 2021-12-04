@@ -1,0 +1,24 @@
+#Comments start with "#"
+#This file specifies the simulation settings
+
+#Window-Settings:
+frame-rate=30
+window_size_x=800
+window_size_y=500
+
+#Body-Settings:
+use-body=1
+body_file_path=../body_files/NACA_0012.txt
+body_points_down_sample=3
+body_offset_x=300
+body_offset_y=250
+body_scale_x=250
+body_scale_y=250
+
+#(Initial)-Uniform-Flow-Settings:
+uniform_flow_x=1.0
+uniform_flow_y=0.0
+
+#Uniform-Flow-Change-Settings (Uniform flow is varried every frame):
+uniform_flow_max_y_val=0.08
+uniform_flow_change_step=0.004
