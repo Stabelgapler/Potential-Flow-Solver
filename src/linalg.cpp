@@ -44,36 +44,6 @@ double Matrix::get_elem(unsigned int row, unsigned int column) const
    return elems[ind(row, column)];
 }
 
-double Matrix::get_min_elem() const
-{   
-    double min_value = this->get_elem(1,1);
-    double temp;
-    for(unsigned int u = 1; u <= rows; ++u)
-    {
-        for(unsigned int v = 2; v <= columns; ++v)
-        {   
-            temp = this->get_elem(u,v);
-            if(temp < min_value){min_value = temp;}
-        } 
-    }
-    return min_value;
-}
-
-double Matrix::get_max_elem() const
-{   
-    double max_value = this->get_elem(1,1);
-    double temp;
-    for(unsigned int u = 1; u <= rows; ++u)
-    {
-        for(unsigned int v = 2; v <= columns; ++v)
-        {   
-            temp = this->get_elem(u,v);
-            if(temp > max_value){max_value = temp;}
-        } 
-    }
-    return max_value;
-}
-
 void Matrix::transpose()
 {
     std::vector<double> temp = elems;
@@ -150,6 +120,26 @@ double Matrix::get_frobenius() const
     }
 
     return sqrt(norm);
+}
+
+double Matrix::get_max() const
+{
+    double max = elems[0];
+    for(unsigned int u = 1; u < elems.size(); ++u)
+    {
+        if(elems[u] > max){max = elems[u];}
+    }
+    return max;
+}
+
+double Matrix::get_min() const
+{
+    double min = elems[0];
+    for(unsigned int u = 1; u < elems.size(); ++u)
+    {
+        if(elems[u] < min){min = elems[u];}
+    }
+    return min;
 }
 
 double Matrix::scalar_prod(const Matrix& rhs) const
@@ -358,8 +348,8 @@ Matrix Matrix::solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0, double o
     Matrix r(A.rows, 1);
 
     if(x0 != nullptr){x = *x0;}
-
-    while(r.get_frobenius() > epsilon || flag)
+    
+    while(r.get_max() > epsilon || flag)
     {   
         flag = false;
 
@@ -575,12 +565,12 @@ void Scalar_Field::add_entry(unsigned int x_num, unsigned int y_num, double valu
 
 double Scalar_Field::get_min() const
 {
-    return this->field.get_min_elem();
+    return this->field.get_min();
 }
 
 double Scalar_Field::get_max() const
 {
-    return this->field.get_max_elem();
+    return this->field.get_max();
 }
 
 std::vector<double> Scalar_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y)

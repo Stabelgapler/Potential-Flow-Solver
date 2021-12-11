@@ -18,14 +18,13 @@ class Matrix
     void set_elem(unsigned int row, unsigned int col, double value);
     double get_elem(unsigned int row, unsigned int col) const;
 
-    double get_min_elem() const;
-    double get_max_elem() const;
-
     void transpose();
     Matrix get_transpose() const;
     void assemble(Matrix loc, std::vector<unsigned int> IDs); //works only for square matrices, check that or implement non square!
     void remove_dof(unsigned int dof);
     double get_frobenius() const;
+    double get_max() const;
+    double get_min() const;
     void overwrite(const Matrix& nmatrix);
     double scalar_prod(const Matrix& rhs) const;
 
