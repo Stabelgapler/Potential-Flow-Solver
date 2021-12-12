@@ -10,7 +10,7 @@
 #include "utility.hpp"
 #include "linalg.hpp"
 #include "physics.hpp"
-
+#include <SFML\Graphics.hpp>
 
 
 Input_Reader::Input_Reader(const std::string input_file_path_n): input_file_path(input_file_path_n), input_file(std::ifstream(input_file_path_n))
@@ -390,6 +390,7 @@ double Mapping::coord_to_pxl()
 
 //Variable initialization with default parameters:
 sf::Font Settings::font = sf::Font();
+sf::ContextSettings Settings::graphic_settings; // 8
 
 double Settings::frame_rate = 30;
 int Settings::window_size_x = 800;
@@ -413,9 +414,10 @@ double Settings::uniform_flow_change_step = uniform_flow_max_y_val / 20;
 //Loads settings from configuration file
 void Settings::initialize(std::string file_path)
 {
-    Settings::font.loadFromFile("../src/Oswald-VariableFont_wght.ttf"); //Load text font
-
     Input_Reader settings_reader(file_path);
+
+    Settings::font.loadFromFile("../src/Oswald-VariableFont_wght.ttf"); //Load text font
+    Settings::graphic_settings.antialiasingLevel = 8; //Antialiasing "smoothes" edges
 
     settings_reader.get_double(&Settings::frame_rate, "frame-rate");
     settings_reader.get_int(&Settings::window_size_x, "window_size_x");

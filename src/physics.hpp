@@ -63,7 +63,7 @@ class Doublet: public Source
     void superpose_velocity(Vector_Field& field);
 };
 
-class Calculations
+class Physics
 {
     public:
     static double* get_velocity(double x_pos, double y_pos);

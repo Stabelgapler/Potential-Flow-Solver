@@ -2,7 +2,7 @@
 #This file specifies the simulation settings
 
 #Window-Settings:
-frame-rate=30
+frame-rate=32
 window_size_x=800
 window_size_y=500
 
@@ -12,8 +12,8 @@ body_file_path=../body_files/NACA_0012.txt
 body_points_down_sample=3
 body_offset_x=300
 body_offset_y=250
-body_scale_x=250
-body_scale_y=250
+body_scale_x=220
+body_scale_y=220
 
 #(Initial)-Uniform-Flow-Settings:
 uniform_flow_x=1.0

@@ -239,7 +239,7 @@ void Doublet::superpose_velocity(Vector_Field& field)
 }
 
 
-double* Calculations::get_velocity(double x_pos, double y_pos)
+double* Physics::get_velocity(double x_pos, double y_pos)
 {
     double* vel_ptr;
     double* vel = new double[2];
@@ -259,7 +259,7 @@ double* Calculations::get_velocity(double x_pos, double y_pos)
     return vel;
 }
 
-std::vector<double> Calculations::integrate_streamline(double x_start, double y_start, double x_end, double step)
+std::vector<double> Physics::integrate_streamline(double x_start, double y_start, double x_end, double step)
 {
     std::vector<double> pos_vec;
 
@@ -280,7 +280,7 @@ std::vector<double> Calculations::integrate_streamline(double x_start, double y_
 
     while(pos[0] < x_end && pos[0] >= x_start && its < max_its)
     {
-        vel = Calculations::get_velocity(pos[0], pos[1]);
+        vel = Physics::get_velocity(pos[0], pos[1]);
 
         vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
         scale = step / vel_mag;
@@ -304,7 +304,7 @@ std::vector<double> Calculations::integrate_streamline(double x_start, double y_
     return pos_vec;
 }
 
-void Calculations::draw_streamline(sf::RenderWindow& window, std::vector<double> pos_vec)
+void Physics::draw_streamline(sf::RenderWindow& window, std::vector<double> pos_vec)
 {
     double x_dist, y_dist, dist, angle;
     
@@ -331,7 +331,7 @@ void Calculations::draw_streamline(sf::RenderWindow& window, std::vector<double>
     return;
 }
 
-void Calculations::calc_pressure_field(Scalar_Field& pfield, double rho)
+void Physics::calc_pressure_field(Scalar_Field& pfield, double rho)
 {
     double v_x = dynamic_cast<Uniform*>(Source::Source_List[0])->x_vel;
     double v_y = dynamic_cast<Uniform*>(Source::Source_List[0])->y_vel;
@@ -348,7 +348,7 @@ void Calculations::calc_pressure_field(Scalar_Field& pfield, double rho)
         {   
             std::vector<double> pos = pfield.get_entry_pos(u,v);
 
-            v_ptr = Calculations::get_velocity(pos[0], pos[1]);
+            v_ptr = Physics::get_velocity(pos[0], pos[1]);
             v_mag = v_ptr[0] * v_ptr[0] + v_ptr[1] * v_ptr[1];
             
             p = 0.5 * rho * (v_inf - v_mag);
@@ -361,7 +361,7 @@ void Calculations::calc_pressure_field(Scalar_Field& pfield, double rho)
     return;
 }
 
-void Calculations::calc_velocity_field(Vector_Field& vfield)
+void Physics::calc_velocity_field(Vector_Field& vfield)
 {   
     for(unsigned int u = 1; u <= vfield.num_x; ++u)
     {
@@ -474,7 +474,7 @@ void Body::calc_source_panel()
 
     for(unsigned int u = 0; u < this->panel_sol.rows; ++u)
     {   
-        net_source += this->panel_sol.get_elem(u+1,1);
+        net_source += this->panel_sol.get_elem(u+1,1) * length[u];
         Point* temp = new Point(c_point_x[u] + this->offset_x, -c_point_y[u] + this->offset_y, this->panel_sol.get_elem(u+1,1));
     }
 
@@ -486,11 +486,11 @@ void Body::calc_source_panel()
 //Work in Progress, not yet working
 void Body::calc_vortex_panel()
 {   
-    std::vector<double> s_points;
-    std::vector<double> c_point_x;
+    std::vector<double> s_points; //Body vertices scaled
+    std::vector<double> c_point_x; //Points centered at panels, such that the c_points lie always between the s_points and vice versa
     std::vector<double> c_point_y;
-    std::vector<double> length;
-    std::vector<double> angle;
+    std::vector<double> length; //Length of edges formed by c_points
+    std::vector<double> angle; //Angle of edges formed by c_points
 
     for(unsigned int u = 0; u < this->points.size()-1; u = u+2)
     {
@@ -515,7 +515,7 @@ void Body::calc_vortex_panel()
     Matrix LSE(c_point_x.size(), c_point_x.size());
     Matrix RHS(c_point_x.size(), 1);
     double A, B, C, D, E, S, INTEGRAL;
-    double Vx = dynamic_cast<Uniform*>(Source::Source_List[0])->x_vel;
+    double Vx = dynamic_cast<Uniform*>(Source::Source_List[0])->x_vel; //Uniform velocities
     double Vy = dynamic_cast<Uniform*>(Source::Source_List[0])->y_vel;
     double V = sqrt(Vx * Vx + Vy * Vy);
     double Vangle = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle();
@@ -550,7 +550,7 @@ void Body::calc_vortex_panel()
         Point* temp = new Point(c_point_x[u] + this->offset_x, -c_point_y[u] + this->offset_y, this->panel_sol.get_elem(u+1,1));
     }
 
-    std::cout << "Net-Panel-Source-Strength: " << net_source << "\n";
+    std::cout << "Net-Vorticity: " << net_source << "\n";
 
     return;
 }

@@ -45,6 +45,7 @@ class Settings
 {
     public:
     static sf::Font font; //Textfont
+    static sf::ContextSettings graphic_settings; //Graphic settings for SFML Library
 
     static double frame_rate;
     static int window_size_x;

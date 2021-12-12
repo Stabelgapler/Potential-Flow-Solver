@@ -349,7 +349,7 @@ Matrix Matrix::solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0, double o
 
     if(x0 != nullptr){x = *x0;}
     
-    while(r.get_max() > epsilon || flag)
+    while(r.get_frobenius() > epsilon || flag)
     {   
         flag = false;
 
