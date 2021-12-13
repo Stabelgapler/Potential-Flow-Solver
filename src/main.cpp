@@ -15,6 +15,7 @@
 //performance
 //replace gamma correction
 //window coordinate transform
+//vector2d insertion --> streamlines, panel method vertex operators
 
 
 int main()
