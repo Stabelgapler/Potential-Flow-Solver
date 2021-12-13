@@ -5,6 +5,27 @@
 
 #include <SFML\Graphics.hpp>
 
+//Simple static vector
+template <typename T, unsigned int N>
+struct Vector
+{
+    T elems[N];
+
+    //Indexing operator overloaded for quicker access to elements
+    T operator[](const unsigned int& idx) const
+    {
+        return this.elems[idx];
+    }
+
+    //Overloading for write access
+    T& operator[](const unsigned int& idx)
+    {   
+        return this->elems[idx];
+    }
+
+};
+
+
 class Matrix
 {   
     public:
@@ -42,6 +63,7 @@ class Matrix
     static Matrix solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon = 1E-5, unsigned int max_count = 7500);
 };
 
+
 class Vector_Field
 {
     protected:
@@ -66,6 +88,7 @@ class Vector_Field
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
 };
+
 
 class Scalar_Field
 {
