@@ -15,7 +15,7 @@
 //performance
 //replace gamma correction
 //window coordinate transform
-//vector2d insertion --> streamlines, panel method vertex operators
+//vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
 
 
 int main()
@@ -64,7 +64,7 @@ int main()
         if(Settings::use_body){Body::Body_List[0]->calc_source_panel();} //Solve source panel distribution for body
 
         Physics::calc_velocity_field(*Vector_Field::Vector_Field_List[0]);
-        Physics::calc_pressure_field(*Scalar_Field::Scalar_Field_List[0], 1.0);
+        Physics::calc_pressure_field(*Scalar_Field::Scalar_Field_List[0]);  //relative pressure
 
         //(*Scalar_Field::Scalar_Field_List[0]).draw_field(window, 10, 0.5); //Alternative way to visualize Pressure field
         (*Scalar_Field::Scalar_Field_List[0]).draw_field_2(window, 1);
@@ -73,7 +73,7 @@ int main()
         Source::draw_sources(window);
         if(Settings::use_body){Body::Body_List[0]->draw_body(window);}
 
-        for(unsigned int u = 0; u < 21; ++u) //Calculates stream lines
+        for(unsigned int u = 0; u < 21; ++u) //Calculates and draws stream lines
         {
             Physics::draw_streamline(window, Physics::integrate_streamline(100, -50 + u*30, 700, 5));
         }
