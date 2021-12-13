@@ -259,11 +259,11 @@ double* Physics::get_velocity(double x_pos, double y_pos)
     return vel;
 }
 
-std::vector<double> Physics::integrate_streamline(double x_start, double y_start, double x_end, double step)
+std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start, double x_end, double step)
 {
-    std::vector<double> pos_vec;
+    std::vector<vec2d> pos_vec;
 
-    double pos[2];
+    vec2d pos;
     double* vel;
     double scale;
     double vel_mag;
@@ -272,15 +272,14 @@ std::vector<double> Physics::integrate_streamline(double x_start, double y_start
     const unsigned long int max_its = 1E3;
     unsigned long int its = 0;
 
-    pos[0] = x_start;
-    pos[1] = y_start;
+    pos.x = x_start;
+    pos.y = y_start;
 
-    pos_vec.push_back(pos[0]);
-    pos_vec.push_back(pos[1]);
+    pos_vec.push_back(pos);
 
-    while(pos[0] < x_end && pos[0] >= x_start && its < max_its)
+    while(pos.x < x_end && pos.x >= x_start && its < max_its)
     {
-        vel = Physics::get_velocity(pos[0], pos[1]);
+        vel = Physics::get_velocity(pos.x, pos.y);
 
         vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
         scale = step / vel_mag;
@@ -291,11 +290,10 @@ std::vector<double> Physics::integrate_streamline(double x_start, double y_start
             return pos_vec;
         }
 
-        pos[0] += scale * vel[0];
-        pos[1] -= scale * vel[1];
+        pos.x += scale * vel[0];
+        pos.y -= scale * vel[1];
 
-        pos_vec.push_back(pos[0]);
-        pos_vec.push_back(pos[1]);
+        pos_vec.push_back(pos);
 
         ++its;
     }
@@ -304,7 +302,7 @@ std::vector<double> Physics::integrate_streamline(double x_start, double y_start
     return pos_vec;
 }
 
-void Physics::draw_streamline(sf::RenderWindow& window, std::vector<double> pos_vec)
+void Physics::draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_vec)
 {
     double x_dist, y_dist, dist, angle;
     
@@ -313,17 +311,17 @@ void Physics::draw_streamline(sf::RenderWindow& window, std::vector<double> pos_
     temp_l.setOrigin(0, line_width/2);
     temp_l.setFillColor(sf::Color::Blue);
     
-    for(unsigned int u = 0; u < pos_vec.size()-2; u = u+2)
+    for(unsigned int u = 0; u < pos_vec.size()-1; ++u)
     {   
-        x_dist = pos_vec[u+2] - pos_vec[u];
-        y_dist = pos_vec[u+3] - pos_vec[u+1];
+        x_dist = pos_vec[u+1].x - pos_vec[u].x;
+        y_dist = pos_vec[u+1].y - pos_vec[u].y;
 
         dist = sqrt(x_dist * x_dist + y_dist * y_dist);
         angle = atan2(y_dist, x_dist) * 180 / M_PI;
 
         temp_l.setSize(sf::Vector2f(dist, line_width));
         temp_l.setRotation(angle);
-        temp_l.setPosition(pos_vec[u], pos_vec[u+1]);
+        temp_l.setPosition(pos_vec[u].x, pos_vec[u].y);
         
         window.draw(temp_l);
     }

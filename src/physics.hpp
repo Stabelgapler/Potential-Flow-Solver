@@ -68,8 +68,8 @@ class Physics
     public:
     static double* get_velocity(double x_pos, double y_pos);
 
-    static std::vector<double> integrate_streamline(double x_start, double y_start, double x_end, double step);
-    static void draw_streamline(sf::RenderWindow& window, std::vector<double> pos_vec);
+    static std::vector<vec2d> integrate_streamline(double x_start, double y_start, double x_end, double step);
+    static void draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_vec);
 
     static void calc_pressure_field(Scalar_Field& pfield, double rho);
 
