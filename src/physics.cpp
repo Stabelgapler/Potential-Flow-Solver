@@ -128,7 +128,6 @@ double* Point::calc_velocity(double pos[])
 void Point::superpose_velocity(Vector_Field& field)
 {   
     std::vector<double> pos;
-    double* vel;
 
     for(unsigned int u = 1; u <= field.num_x; ++u)
     {   
@@ -136,10 +135,12 @@ void Point::superpose_velocity(Vector_Field& field)
         {   
             pos = field.get_entry_pos(u,v);
             
-            vel = calc_velocity(&pos[0]);
+            double* vel = calc_velocity(&pos[0]);
 
             field.add_entry(u,v,1,vel[0]);
             field.add_entry(u,v,2,vel[1]);
+
+            delete [] vel;
         }
     }
 
@@ -174,7 +175,6 @@ double* Vortex::calc_velocity(double pos[])
 void Vortex::superpose_velocity(Vector_Field& field)
 {   
     std::vector<double> pos;
-    double* vel;
 
     for(unsigned int u = 1; u <= field.num_x; ++u)
     {   
@@ -182,10 +182,12 @@ void Vortex::superpose_velocity(Vector_Field& field)
         {   
             pos = field.get_entry_pos(u,v);
 
-            vel = calc_velocity(&pos[0]);
+            double* vel = calc_velocity(&pos[0]);
 
             field.add_entry(u,v,1,vel[0]);
             field.add_entry(u,v,2,vel[1]);
+
+            delete [] vel;
         }
     }
 
@@ -220,7 +222,6 @@ double* Doublet::calc_velocity(double pos[])
 void Doublet::superpose_velocity(Vector_Field& field)
 {   
     std::vector<double> pos;
-    double* vel;
 
     for(unsigned int u = 1; u <= field.num_x; ++u)
     {   
@@ -228,10 +229,12 @@ void Doublet::superpose_velocity(Vector_Field& field)
         {   
             pos = field.get_entry_pos(u,v);
             
-            vel = calc_velocity(&pos[0]);
+            double* vel = calc_velocity(&pos[0]);
 
             field.add_entry(u,v,1,vel[0]);
             field.add_entry(u,v,2,vel[1]);
+
+            delete [] vel;
         }
     }
 
@@ -241,7 +244,6 @@ void Doublet::superpose_velocity(Vector_Field& field)
 
 double* Physics::get_velocity(double x_pos, double y_pos)
 {
-    double* vel_ptr;
     double* vel = new double[2];
     vel[0] = 0;
     vel[1] = 0;
@@ -250,12 +252,12 @@ double* Physics::get_velocity(double x_pos, double y_pos)
 
     for(unsigned int u=0; u < Source::Source_List.size(); ++u)
     {
-        vel_ptr = Source::Source_List[u]->calc_velocity(pos);
+        double* vel_ptr = Source::Source_List[u]->calc_velocity(pos);
         vel[0] += vel_ptr[0];
         vel[1] += vel_ptr[1];
+        delete [] vel_ptr;
     }
 
-    delete [] vel_ptr;
     return vel;
 }
 
@@ -264,7 +266,6 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
     std::vector<vec2d> pos_vec;
 
     vec2d pos;
-    double* vel;
     double scale;
     double vel_mag;
 
@@ -279,7 +280,7 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
 
     while(pos.x < x_end && pos.x >= x_start && its < max_its)
     {
-        vel = Physics::get_velocity(pos.x, pos.y);
+        double* vel = Physics::get_velocity(pos.x, pos.y);
 
         vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
         scale = step / vel_mag;
@@ -296,9 +297,9 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
         pos_vec.push_back(pos);
 
         ++its;
+        delete [] vel;
     }
 
-    delete [] vel;
     return pos_vec;
 }
 
@@ -335,7 +336,6 @@ void Physics::calc_pressure_field(Scalar_Field& pfield, double rho)
     double v_y = dynamic_cast<Uniform*>(Source::Source_List[0])->y_vel;
     const double v_inf = v_x * v_x + v_y * v_y;
 
-    double* v_ptr;
     double v_mag = 0;
 
     double p = 0;
@@ -346,16 +346,17 @@ void Physics::calc_pressure_field(Scalar_Field& pfield, double rho)
         {   
             std::vector<double> pos = pfield.get_entry_pos(u,v);
 
-            v_ptr = Physics::get_velocity(pos[0], pos[1]);
+            double* v_ptr = Physics::get_velocity(pos[0], pos[1]);
             v_mag = v_ptr[0] * v_ptr[0] + v_ptr[1] * v_ptr[1];
             
             p = 0.5 * rho * (v_inf - v_mag);
 
             pfield.set_entry(u,v,p);
+
+            delete [] v_ptr;
         }
     } 
 
-    delete [] v_ptr;
     return;
 }
 
