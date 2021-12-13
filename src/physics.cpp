@@ -429,29 +429,35 @@ void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
 
 void Body::calc_source_panel()
 {   
-    std::vector<vec2d> scaled_vertices;
-    std::vector<double> c_point_x;
-    std::vector<double> c_point_y;
-    std::vector<double> length;
-    std::vector<double> angle;
+    std::vector<vec2d> scaled_vertices; //Vertices defining panel edges
+    std::vector<vec2d> mid_points; //Points in the middle of the panels
+    std::vector<double> length; //Panel length
+    std::vector<double> angle; //Panel angle
+
+    vec2d temp_vertex;
 
     get_scaled_vertices(scaled_vertices);
+    unsigned int end_idx = scaled_vertices.size()-1;
 
-    for(unsigned int u = 0; u < scaled_vertices.size()-1; ++u)
-    {
-        c_point_x.push_back((scaled_vertices[u].x + scaled_vertices[u+1].x) / 2.0);
-        c_point_y.push_back((scaled_vertices[u].y + scaled_vertices[u+1].y) / 2.0);
+    for(unsigned int u = 0; u < end_idx; ++u)
+    {   
+        temp_vertex.x = (scaled_vertices[u].x + scaled_vertices[u+1].x) / 2.0;
+        temp_vertex.y = (scaled_vertices[u].y + scaled_vertices[u+1].y) / 2.0;
+        mid_points.push_back(temp_vertex);
+
         length.push_back(sqrt((scaled_vertices[u+1].x - scaled_vertices[u].x) * (scaled_vertices[u+1].x - scaled_vertices[u].x) + (scaled_vertices[u+1].y - scaled_vertices[u].y) * (scaled_vertices[u+1].y - scaled_vertices[u].y)));
         angle.push_back(atan2((scaled_vertices[u+1].y - scaled_vertices[u].y), (scaled_vertices[u+1].x - scaled_vertices[u].x)));
     }
 
-    c_point_x.push_back((scaled_vertices[scaled_vertices.size()-1].x + scaled_vertices[0].x) / 2.0);
-    c_point_y.push_back((scaled_vertices[scaled_vertices.size()-1].y + scaled_vertices[0].x) / 2.0);
-    length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x) * (scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x) + (scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y) * (scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y)));
-    angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y), (scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x)));
+    temp_vertex.x = (scaled_vertices[end_idx].x + scaled_vertices[0].x) / 2.0;
+    temp_vertex.y = (scaled_vertices[end_idx].y + scaled_vertices[0].y) / 2.0;
+    mid_points.push_back(temp_vertex);
+    
+    length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[end_idx].x) * (scaled_vertices[0].x - scaled_vertices[end_idx].x) + (scaled_vertices[0].y - scaled_vertices[end_idx].y) * (scaled_vertices[0].y - scaled_vertices[end_idx].y)));
+    angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[end_idx].y), (scaled_vertices[0].x - scaled_vertices[end_idx].x)));
 
-    Matrix LSE(c_point_x.size(), c_point_x.size());
-    Matrix RHS(c_point_x.size(), 1);
+    Matrix LSE(mid_points.size(), mid_points.size());
+    Matrix RHS(mid_points.size(), 1);
     double A, B, C, D, E, S, INTEGRAL;
     double Vx = dynamic_cast<Uniform*>(Source::Source_List[0])->x_vel;
     double Vy = dynamic_cast<Uniform*>(Source::Source_List[0])->y_vel;
@@ -464,10 +470,10 @@ void Body::calc_source_panel()
         {
             if(u == v){LSE.set_elem(u+1,v+1,M_PI);}
             else{
-                A = -(c_point_x[u] - scaled_vertices[v].x) * cos(angle[v]) - (c_point_y[u] - scaled_vertices[v].y) * sin(angle[v]);
-                B = (c_point_x[u] - scaled_vertices[v].x) * (c_point_x[u] - scaled_vertices[v].x) + (c_point_y[u] - scaled_vertices[v].y) * (c_point_y[u] - scaled_vertices[v].y);
+                A = -(mid_points[u].x - scaled_vertices[v].x) * cos(angle[v]) - (mid_points[u].y - scaled_vertices[v].y) * sin(angle[v]);
+                B = (mid_points[u].x - scaled_vertices[v].x) * (mid_points[u].x - scaled_vertices[v].x) + (mid_points[u].y - scaled_vertices[v].y) * (mid_points[u].y - scaled_vertices[v].y);
                 C = sin(angle[u] - angle[v]);
-                D = -(c_point_x[u] - scaled_vertices[v].x) * sin(angle[u]) + (c_point_y[u] - scaled_vertices[v].y) * cos(angle[u]);
+                D = -(mid_points[u].x - scaled_vertices[v].x) * sin(angle[u]) + (mid_points[u].y - scaled_vertices[v].y) * cos(angle[u]);
                 E = sqrt(B - A*A);
                 S = length[v];
                 INTEGRAL = (C/2) * log((S*S + 2*A*S + B) / B) + ((D - A*C) / E) * (atan((S + A) / E) - atan(A / E));
@@ -485,7 +491,7 @@ void Body::calc_source_panel()
     for(unsigned int u = 0; u < this->panel_sol.rows; ++u)
     {   
         net_source += this->panel_sol.get_elem(u+1,1) * length[u];
-        Point* temp = new Point(c_point_x[u] + this->offset_x, -c_point_y[u] + this->offset_y, this->panel_sol.get_elem(u+1,1));
+        Point* temp = new Point(mid_points[u].x + this->offset_x, -mid_points[u].y + this->offset_y, this->panel_sol.get_elem(u+1,1));
     }
 
     std::cout << "Net-Panel-Source-Strength: " << net_source << "\n";
