@@ -427,15 +427,17 @@ void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
     return;
 }
 
+//Calculates the source panel method, i.e. source distribution on body surface to make its surface a streamline
 void Body::calc_source_panel()
 {   
-    std::vector<vec2d> scaled_vertices; //Vertices defining panel edges
+    std::vector<vec2d> scaled_vertices; //Vertices defining panels
     std::vector<vec2d> mid_points; //Points in the middle of the panels
     std::vector<double> length; //Panel length
     std::vector<double> angle; //Panel angle
 
     vec2d temp_vertex;
 
+    //Setup panels
     get_scaled_vertices(scaled_vertices);
     unsigned int end_idx = scaled_vertices.size()-1;
 
@@ -456,6 +458,7 @@ void Body::calc_source_panel()
     length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[end_idx].x) * (scaled_vertices[0].x - scaled_vertices[end_idx].x) + (scaled_vertices[0].y - scaled_vertices[end_idx].y) * (scaled_vertices[0].y - scaled_vertices[end_idx].y)));
     angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[end_idx].y), (scaled_vertices[0].x - scaled_vertices[end_idx].x)));
 
+    //Assemble linear system of equations
     Matrix LSE(mid_points.size(), mid_points.size());
     Matrix RHS(mid_points.size(), 1);
     double A, B, C, D, E, S, INTEGRAL;
@@ -484,8 +487,10 @@ void Body::calc_source_panel()
         RHS.set_elem(u+1,1, -2 * M_PI * V * sin(angle[u] - Vangle));
     }
 
+    //Solve using Gauss Seidel iteration
     this->panel_sol = Matrix::solve_LGS_GS(LSE, RHS, &this->panel_sol, 1.8);
 
+    //Place source distribution and calculate net source strength
     double net_source = 0;
 
     for(unsigned int u = 0; u < this->panel_sol.rows; ++u)
