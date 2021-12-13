@@ -415,33 +415,40 @@ void Body::add_vertex(double x_pos, double y_pos)
     this->vertices.push_back(vertex);
 }
 
+void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
+{   
+    vec2d temp_vertex;
+    for(unsigned int u = 0; u < this->vertices.size(); ++u)
+    {
+        temp_vertex.x = this->vertices[u].x * this->scale_x;
+        temp_vertex.y = this->vertices[u].y * this->scale_y;
+        scaled_vertices.push_back(temp_vertex);
+    }
+    return;
+}
+
 void Body::calc_source_panel()
 {   
-    std::vector<double> s_points;
+    std::vector<vec2d> scaled_vertices;
     std::vector<double> c_point_x;
     std::vector<double> c_point_y;
     std::vector<double> length;
     std::vector<double> angle;
 
-    for(unsigned int u = 0; u < this->vertices.size(); ++u)
+    get_scaled_vertices(scaled_vertices);
+
+    for(unsigned int u = 0; u < scaled_vertices.size()-1; ++u)
     {
-        s_points.push_back(this->vertices[u].x * this->scale_x);
-        s_points.push_back(this->vertices[u].y * this->scale_x);
+        c_point_x.push_back((scaled_vertices[u].x + scaled_vertices[u+1].x) / 2.0);
+        c_point_y.push_back((scaled_vertices[u].y + scaled_vertices[u+1].y) / 2.0);
+        length.push_back(sqrt((scaled_vertices[u+1].x - scaled_vertices[u].x) * (scaled_vertices[u+1].x - scaled_vertices[u].x) + (scaled_vertices[u+1].y - scaled_vertices[u].y) * (scaled_vertices[u+1].y - scaled_vertices[u].y)));
+        angle.push_back(atan2((scaled_vertices[u+1].y - scaled_vertices[u].y), (scaled_vertices[u+1].x - scaled_vertices[u].x)));
     }
 
-    for(unsigned int u = 0; u < s_points.size()-3; u = u+2)
-    {
-        c_point_x.push_back((s_points[u] + s_points[u+2]) / 2.0);
-        c_point_y.push_back((s_points[u+1] + s_points[u+3]) / 2.0);
-        length.push_back(sqrt((s_points[u+2] - s_points[u]) * (s_points[u+2] - s_points[u]) + (s_points[u+3] - s_points[u+1]) * (s_points[u+3] - s_points[u+1])));
-        angle.push_back(atan2((s_points[u+3] - s_points[u+1]), (s_points[u+2] - s_points[u])));
-    }
-
-    c_point_x.push_back((s_points[s_points.size()-2] + s_points[0]) / 2.0);
-    c_point_y.push_back((s_points[s_points.size()-1] + s_points[1]) / 2.0);
-    length.push_back(sqrt((s_points[0] - s_points[s_points.size()-2]) * (s_points[0] - s_points[s_points.size()-2]) + (s_points[1] - s_points[s_points.size()-1]) * (s_points[1] - s_points[s_points.size()-1])));
-    angle.push_back(atan2((s_points[1] - s_points[s_points.size()-1]), (s_points[0] - s_points[s_points.size()-2])));
-
+    c_point_x.push_back((scaled_vertices[scaled_vertices.size()-1].x + scaled_vertices[0].x) / 2.0);
+    c_point_y.push_back((scaled_vertices[scaled_vertices.size()-1].y + scaled_vertices[0].x) / 2.0);
+    length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x) * (scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x) + (scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y) * (scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y)));
+    angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[scaled_vertices.size()-1].y), (scaled_vertices[0].x - scaled_vertices[scaled_vertices.size()-1].x)));
 
     Matrix LSE(c_point_x.size(), c_point_x.size());
     Matrix RHS(c_point_x.size(), 1);
@@ -457,10 +464,10 @@ void Body::calc_source_panel()
         {
             if(u == v){LSE.set_elem(u+1,v+1,M_PI);}
             else{
-                A = -(c_point_x[u] - s_points[v*2]) * cos(angle[v]) - (c_point_y[u] - s_points[v*2 + 1]) * sin(angle[v]);
-                B = (c_point_x[u] - s_points[v*2]) * (c_point_x[u] - s_points[v*2]) + (c_point_y[u] - s_points[v*2 + 1]) * (c_point_y[u] - s_points[v*2 + 1]);
+                A = -(c_point_x[u] - scaled_vertices[v].x) * cos(angle[v]) - (c_point_y[u] - scaled_vertices[v].y) * sin(angle[v]);
+                B = (c_point_x[u] - scaled_vertices[v].x) * (c_point_x[u] - scaled_vertices[v].x) + (c_point_y[u] - scaled_vertices[v].y) * (c_point_y[u] - scaled_vertices[v].y);
                 C = sin(angle[u] - angle[v]);
-                D = -(c_point_x[u] - s_points[v*2]) * sin(angle[u]) + (c_point_y[u] - s_points[v*2 + 1]) * cos(angle[u]);
+                D = -(c_point_x[u] - scaled_vertices[v].x) * sin(angle[u]) + (c_point_y[u] - scaled_vertices[v].y) * cos(angle[u]);
                 E = sqrt(B - A*A);
                 S = length[v];
                 INTEGRAL = (C/2) * log((S*S + 2*A*S + B) / B) + ((D - A*C) / E) * (atan((S + A) / E) - atan(A / E));
@@ -486,6 +493,7 @@ void Body::calc_source_panel()
     return;
 }
 
+/*
 //Work in Progress, not yet working
 void Body::calc_vortex_panel()
 {   
@@ -557,6 +565,7 @@ void Body::calc_vortex_panel()
 
     return;
 }
+*/
 
 void Body::draw_body(sf::RenderWindow& window)
 {   
