@@ -166,7 +166,8 @@ void Input_Reader::print(std::vector<double> vec)
 
 void Input_Reader::load_body()
 {   
-    std::vector<double> vertices;
+    std::vector<vec2d> vertices;
+    vec2d vertex;
     unsigned int down_sample = Settings::body_points_down_sample;
 
     if(input_file.is_open())
@@ -190,7 +191,7 @@ void Input_Reader::load_body()
                     for ( ; char_ind_2 < line.length(); char_ind_2++ ){ if(isspace(line[char_ind_2]) || line[char_ind_2] == ';') break; }
                     
                     number_str = line.substr(char_ind_1, char_ind_2 - char_ind_1);
-                    vertices.push_back(atof(number_str.c_str()));
+                    vertex.x = atof(number_str.c_str());
 
                     char_ind_1 = char_ind_2 + 1;
                     for ( ; char_ind_1 < line.length(); char_ind_1++ ){ if(isdigit(line[char_ind_1]) || line[char_ind_1] == '-') break; }
@@ -198,7 +199,9 @@ void Input_Reader::load_body()
                     for ( ; char_ind_2 < line.length(); char_ind_2++ ){ if(isspace(line[char_ind_2]) || line[char_ind_2] == ';') break; }
 
                     number_str = line.substr(char_ind_1, char_ind_2 - char_ind_1);
-                    vertices.push_back(atof(number_str.c_str()));
+                    vertex.y = atof(number_str.c_str());
+
+                    vertices.push_back(vertex);
 
                     line_ctr = 0;
                 }

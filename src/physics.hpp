@@ -79,7 +79,7 @@ class Physics
 class Body
 {   
     protected:
-    std::vector<double> points;
+    std::vector<vec2d> vertices;
     double offset_x, offset_y, scale_x, scale_y;
 
     public:
@@ -87,7 +87,7 @@ class Body
 
     Matrix panel_sol;
 
-    Body(std::vector<double> npoints);
+    Body(std::vector<vec2d> nvertices);
 
     void set_offset(double noffset_x, double noffset_y);
     void set_scale(double nscale_x, double nscale_y);

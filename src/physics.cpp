@@ -381,11 +381,11 @@ void Physics::calc_velocity_field(Vector_Field& vfield)
 
 std::vector<Body *> Body::Body_List;
 
-Body::Body(std::vector<double> npoints): panel_sol(npoints.size() / 2,1)
+Body::Body(std::vector<vec2d> nvertices): panel_sol(nvertices.size(), 1)
 {   
     Body::Body_List.push_back(this);
 
-    this->points = npoints;
+    this->vertices = nvertices;
 
     this->offset_x = 0;
     this->offset_y = 0;
@@ -407,9 +407,12 @@ void Body::set_scale(double nscale_x, double nscale_y)
 }
     
 void Body::add_vertex(double x_pos, double y_pos)
-{
-    this->points.push_back(x_pos);
-    this->points.push_back(y_pos);
+{   
+    vec2d vertex;
+    vertex.x = x_pos;
+    vertex.y = y_pos;
+
+    this->vertices.push_back(vertex);
 }
 
 void Body::calc_source_panel()
@@ -420,10 +423,10 @@ void Body::calc_source_panel()
     std::vector<double> length;
     std::vector<double> angle;
 
-    for(unsigned int u = 0; u < this->points.size()-1; u = u+2)
+    for(unsigned int u = 0; u < this->vertices.size(); ++u)
     {
-        s_points.push_back(this->points[u] * this->scale_x);
-        s_points.push_back(this->points[u+1] * this->scale_y);
+        s_points.push_back(this->vertices[u].x * this->scale_x);
+        s_points.push_back(this->vertices[u].y * this->scale_x);
     }
 
     for(unsigned int u = 0; u < s_points.size()-3; u = u+2)
@@ -492,10 +495,10 @@ void Body::calc_vortex_panel()
     std::vector<double> length; //Length of edges formed by c_points
     std::vector<double> angle; //Angle of edges formed by c_points
 
-    for(unsigned int u = 0; u < this->points.size()-1; u = u+2)
+    for(unsigned int u = 0; u < this->vertices.size(); ++u)
     {
-        s_points.push_back(this->points[u] * this->scale_x);
-        s_points.push_back(this->points[u+1] * this->scale_y);
+        s_points.push_back(this->vertices[u].x * this->scale_x);
+        s_points.push_back(this->vertices[u].y * this->scale_x);
     }
 
     for(unsigned int u = 0; u < s_points.size()-3; u = u+2)
@@ -558,13 +561,13 @@ void Body::calc_vortex_panel()
 void Body::draw_body(sf::RenderWindow& window)
 {   
     sf::ConvexShape polygon;
-    polygon.setPointCount(this->points.size() / 2);
+    polygon.setPointCount(this->vertices.size());
     polygon.setOutlineColor(sf::Color::Black);
     polygon.setOutlineThickness(1);
     
-    for(unsigned int u = 0; u < this->points.size() - 1; u = u+2)
+    for(unsigned int u = 0; u < this->vertices.size(); ++u)
     {   
-        polygon.setPoint(u / 2, sf::Vector2f(this->points[u] * this->scale_x + this->offset_x, this->points[u+1] * -this->scale_y + this->offset_y));
+        polygon.setPoint(u, sf::Vector2f(this->vertices[u].x * this->scale_x + this->offset_x, this->vertices[u].y * -this->scale_y + this->offset_y));
     }
     window.draw(polygon);
 }
