@@ -7,9 +7,10 @@
 
 //Simple static vector
 template <typename T, unsigned int N>
-struct Vector
+struct stat_vector
 {
     T elems[N];
+    unsigned int size = N;
 
     //Indexing operator overloaded for quicker access to elements
     T operator[](const unsigned int& idx) const
@@ -25,6 +26,15 @@ struct Vector
 
 };
 
+struct vec2d
+{
+    double x, y;
+};
+
+struct vec3d
+{
+    double x, y, z;
+};
 
 class Matrix
 {   
@@ -63,7 +73,6 @@ class Matrix
     static Matrix solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon = 1E-5, unsigned int max_count = 7500);
 };
 
-
 class Vector_Field
 {
     protected:
@@ -88,7 +97,6 @@ class Vector_Field
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
 };
-
 
 class Scalar_Field
 {
