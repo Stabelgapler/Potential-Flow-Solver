@@ -385,6 +385,26 @@ void Mapping::draw_colorbar(sf::RenderWindow& window, double x_pos, double y_pos
 
 }
 
+void Mapping::draw_angle_of_attack(sf::RenderWindow& window, double x_pos, double y_pos, unsigned int size)
+{   
+    double aof = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle();
+    aof = aof * (180/(M_PI)); //Convert to degrees
+
+    char num_char[10];
+    sprintf(num_char, "%6.2f", aof);
+    std::string num_str(num_char);
+
+    sf::Text text;
+    text.setFont(Settings::font);
+    text.setCharacterSize(size);
+    text.setFillColor(sf::Color::White);
+
+    text.setString("AOF: " + num_str + " deg");
+    text.setOrigin(sf::Vector2f(0, text.getLocalBounds().height * 0.75));
+    text.setPosition(x_pos + 10, y_pos);
+    window.draw(text);
+}
+
 double Mapping::coord_to_pxl()
 {
     return 0;

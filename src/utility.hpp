@@ -38,6 +38,7 @@ class Mapping
     static sf::Color colormap_rgb(const double v_min, const double v_max, const double value, const double alpha = 255);
     static double gamma_corr(double value, double gamma);
     static void draw_colorbar(sf::RenderWindow& window, double x_pos, double y_pos, double height, double width, double steps, double min_val, double max_val, double gamma, double disp_min, double disp_max);
+    static void draw_angle_of_attack(sf::RenderWindow& window, double x_pos, double y_pos, unsigned int size = 15);
     static double coord_to_pxl();
 };
 

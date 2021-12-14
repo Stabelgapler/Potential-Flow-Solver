@@ -73,10 +73,13 @@ int main()
         Source::draw_sources(window);
         if(Settings::use_body){Body::Body_List[0]->draw_body(window);}
 
-        for(unsigned int u = 0; u < 21; ++u) //Calculates and draws stream lines
+        for(unsigned int u = 0; u < 15; ++u) //Calculates and draws stream lines
         {
-            Physics::draw_streamline(window, Physics::integrate_streamline(100, -50 + u*30, 700, 5));
+            Physics::draw_streamline(window, Physics::integrate_streamline(100, 50 + u*28.5714, 700, 5));
         }
+
+        //Print angle of attack to screen
+        Mapping::draw_angle_of_attack(window, 705, 390);
 
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow
 
