@@ -434,26 +434,18 @@ void Body::calc_source_panel()
     std::vector<double> length; //Panel length
     std::vector<double> angle; //Panel angle
 
-    vec2d temp_vertex;
-
     //Setup panels
     get_scaled_vertices(scaled_vertices);
     unsigned int end_idx = scaled_vertices.size()-1;
 
     for(unsigned int u = 0; u < end_idx; ++u)
     {   
-        temp_vertex.x = (scaled_vertices[u].x + scaled_vertices[u+1].x) / 2.0;
-        temp_vertex.y = (scaled_vertices[u].y + scaled_vertices[u+1].y) / 2.0;
-        mid_points.push_back(temp_vertex);
-
-        length.push_back(sqrt((scaled_vertices[u+1].x - scaled_vertices[u].x) * (scaled_vertices[u+1].x - scaled_vertices[u].x) + (scaled_vertices[u+1].y - scaled_vertices[u].y) * (scaled_vertices[u+1].y - scaled_vertices[u].y)));
+        mid_points.push_back(scaled_vertices[u].add(scaled_vertices[u+1]) / 2.0);
+        length.push_back(scaled_vertices[u+1].subtract(scaled_vertices[u]).magnitude());
         angle.push_back(atan2((scaled_vertices[u+1].y - scaled_vertices[u].y), (scaled_vertices[u+1].x - scaled_vertices[u].x)));
     }
 
-    temp_vertex.x = (scaled_vertices[end_idx].x + scaled_vertices[0].x) / 2.0;
-    temp_vertex.y = (scaled_vertices[end_idx].y + scaled_vertices[0].y) / 2.0;
-    mid_points.push_back(temp_vertex);
-    
+    mid_points.push_back(scaled_vertices[end_idx].add(scaled_vertices[0]) / 2.0);
     length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[end_idx].x) * (scaled_vertices[0].x - scaled_vertices[end_idx].x) + (scaled_vertices[0].y - scaled_vertices[end_idx].y) * (scaled_vertices[0].y - scaled_vertices[end_idx].y)));
     angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[end_idx].y), (scaled_vertices[0].x - scaled_vertices[end_idx].x)));
 
@@ -483,10 +475,14 @@ void Body::calc_source_panel()
                 LSE.set_elem(u+1,v+1,INTEGRAL);
             }
         }
-        RHS.set_elem(u+1,1, -2 * M_PI * V * sin(angle[u] - Vangle));
+        RHS.set_elem(u+1,1, 2 * M_PI * V * sin(angle[u] - Vangle));
     }
 
     //Solve using Gauss Seidel iteration
+    if(Settings::invert_solution)
+    {
+        RHS = RHS * -1;
+    }
     this->panel_sol = Matrix::solve_LGS_GS(LSE, RHS, &this->panel_sol, 1.8);
 
     //Place source distribution and calculate net source strength

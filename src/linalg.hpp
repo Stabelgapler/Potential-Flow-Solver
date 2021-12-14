@@ -29,6 +29,83 @@ struct stat_vector
 struct vec2d
 {
     double x, y;
+
+    double magnitude() const
+    {
+        return sqrt(this->x * this->x + this->y * this->y);
+    }
+
+    double angle() const
+    {
+        return atan2(this->y, this->x);
+    }
+
+    vec2d& operator+(const vec2d& rhs)
+    {
+        this->x += rhs.x;
+        this->y += rhs.y;
+        return *this;
+    }
+
+    vec2d add(const vec2d& rhs) const
+    {   
+        vec2d vec;
+        vec.x = this->x + rhs.x;
+        vec.y = this->y + rhs.y;
+        return vec;
+    }
+
+    vec2d& operator-(const vec2d& rhs)
+    {
+        this->x -= rhs.x;
+        this->y -= rhs.y;
+        return *this;
+    }
+
+    vec2d subtract(const vec2d& rhs) const
+    {   
+        vec2d vec;
+        vec.x = this->x - rhs.x;
+        vec.y = this->y - rhs.y;
+        return vec;
+    }
+
+    vec2d& operator*(const double scalar)
+    {
+        this->x *= scalar;
+        this->y *= scalar;
+        return *this;
+    }
+
+    vec2d multiply(const double scalar) const
+    {   
+        vec2d vec;
+        vec.x = this->x * scalar;
+        vec.y = this->y * scalar;
+        return vec;
+    }
+
+    vec2d& operator/(const double scalar)
+    {
+        this->x /= scalar;
+        this->y /= scalar;
+        return *this;
+    }
+
+    vec2d divide(const double scalar) const
+    {   
+        vec2d vec;
+        vec.x = this->x / scalar;
+        vec.y = this->y / scalar;
+        return vec;
+    }
+
+    vec2d& operator=(const vec2d& rhs)
+    {
+        this->x = rhs.x;
+        this->y = rhs.y;
+        return *this;
+    }
 };
 
 struct vec3d

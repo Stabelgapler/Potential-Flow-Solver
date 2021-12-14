@@ -12,7 +12,7 @@
 #include "physics.hpp"
 
 //ToDo
-//performance
+//performance, i.e. consts and references, overload linalg library with two versions, on object and by value
 //replace gamma correction
 //window coordinate transform
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle

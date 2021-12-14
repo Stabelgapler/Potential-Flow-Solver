@@ -52,6 +52,7 @@ class Settings
     static int window_size_y;
     
     static int use_body;
+    static int invert_solution;
     static std::string body_file_path;
     static int body_points_down_sample; //Enables down-sampling, i.e. use only every nth point in body file
 

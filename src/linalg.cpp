@@ -176,7 +176,7 @@ void Matrix::print() const
         for(unsigned int v = 1; v <= columns; ++v)
         {   
             std::cout << elems[ind(u,v)];
-            if(v < columns){std::cout << " ";}
+            if(v < columns){std::cout << " \t";}
         }
         std::cout << "|" << std::endl;
     }
