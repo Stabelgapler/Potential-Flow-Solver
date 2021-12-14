@@ -93,6 +93,8 @@ class Body
     void set_scale(double nscale_x, double nscale_y);
 
     void add_vertex(double x_pos, double y_pos);
+    void interpolate_vertices();
+
     void get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const;
 
     void calc_source_panel();

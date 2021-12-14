@@ -16,6 +16,8 @@
 //replace gamma correction
 //window coordinate transform
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
+//split vec2d implementation to header and source file
+//Body vertex interpolation
 
 
 int main()
@@ -39,6 +41,7 @@ int main()
     {
         Input_Reader body_reader(Settings::body_file_path);
         body_reader.load_body(); //Load body contour from point-file
+        //Body::Body_List[0]->interpolate_vertices(); //WIP
         Body::Body_List[0]->set_offset(Settings::body_offset_x, Settings::body_offset_y); //Center Body in Window    
         Body::Body_List[0]->set_scale(Settings::body_scale_x, Settings::body_scale_y); //Scale Body
     }
@@ -64,7 +67,7 @@ int main()
         if(Settings::use_body){Body::Body_List[0]->calc_source_panel();} //Solve source panel distribution for body
 
         Physics::calc_velocity_field(*Vector_Field::Vector_Field_List[0]);
-        Physics::calc_pressure_field(*Scalar_Field::Scalar_Field_List[0]);  //relative pressure
+        Physics::calc_pressure_field(*Scalar_Field::Scalar_Field_List[0]);  //this is a relative pressure
 
         //(*Scalar_Field::Scalar_Field_List[0]).draw_field(window, 10, 0.5); //Alternative way to visualize Pressure field
         (*Scalar_Field::Scalar_Field_List[0]).draw_field_2(window, 1);
@@ -79,7 +82,7 @@ int main()
         }
 
         //Print angle of attack to screen
-        Mapping::draw_angle_of_attack(window, 705, 390);
+        Mapping::draw_angle_of_attack(window, 100, 30);
 
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow
 

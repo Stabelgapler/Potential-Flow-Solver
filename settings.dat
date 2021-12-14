@@ -10,12 +10,12 @@ window_size_y=500
 use-body=1
 #If the panels are ordered in a clockwise fashion, then invert_solution = 0!
 invert_solution=1
-body_file_path=../body_files/circle_200.txt
-body_points_down_sample=2
-body_offset_x=300
+body_file_path=../body_files/NACA_0012.txt
+body_points_down_sample=1
+body_offset_x=275
 body_offset_y=250
-body_scale_x=30
-body_scale_y=30
+body_scale_x=250
+body_scale_y=250
 
 #(Initial)-Uniform-Flow-Settings:
 uniform_flow_x=1.0

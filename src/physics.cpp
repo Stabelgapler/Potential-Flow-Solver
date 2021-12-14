@@ -414,6 +414,26 @@ void Body::add_vertex(double x_pos, double y_pos)
     this->vertices.push_back(vertex);
 }
 
+//WIP weird nan error probably in calc source panels, some entries in the linear system are nan
+void Body::interpolate_vertices()
+{   
+    std::vector<vec2d> nvertices;
+    unsigned int end_idx = this->vertices.size()-1;
+
+    for(unsigned int u = 0; u < end_idx; ++u)
+    {   
+        nvertices.push_back(this->vertices[u]);
+        nvertices.push_back(this->vertices[u].add(this->vertices[u+1]) / 2.0);
+    }
+    nvertices.push_back(this->vertices[end_idx]);
+    nvertices.push_back(this->vertices[end_idx].add(this->vertices[0]) / 2.0);
+
+    this->vertices = nvertices;
+
+    Matrix nsol(nvertices.size(),1);
+    this->panel_sol.overwrite(nsol); 
+}
+
 void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
 {   
     vec2d temp_vertex;
@@ -471,7 +491,7 @@ void Body::calc_source_panel()
                 E = sqrt(B - A*A);
                 S = length[v];
                 INTEGRAL = (C/2) * log((S*S + 2*A*S + B) / B) + ((D - A*C) / E) * (atan((S + A) / E) - atan(A / E));
-
+                
                 LSE.set_elem(u+1,v+1,INTEGRAL);
             }
         }

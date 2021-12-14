@@ -131,8 +131,10 @@ class Matrix
     void assemble(Matrix loc, std::vector<unsigned int> IDs); //works only for square matrices, check that or implement non square!
     void remove_dof(unsigned int dof);
     double get_frobenius() const;
+
     double get_max() const;
     double get_min() const;
+    
     void overwrite(const Matrix& nmatrix);
     double scalar_prod(const Matrix& rhs) const;
 
