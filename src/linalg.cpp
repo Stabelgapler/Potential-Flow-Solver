@@ -200,7 +200,82 @@ void Matrix::print_MATLAB() const
     return;
 }
 
-Matrix Matrix::operator*(const Matrix& rhs) const
+Matrix& Matrix::operator*(const Matrix& rhs)
+{   
+    if(this->columns != rhs.rows)
+    {
+        throw std::invalid_argument("Matrix dimensions do not agree!");
+    }
+
+    Matrix product(this->rows, rhs.columns);
+
+    for (int row = 1; row <= this->rows; row++)
+    {
+        for (int col = 1; col <= rhs.columns; col++)
+        {
+            for (int inner = 1; inner <= this->columns; inner++)
+            {
+                product.elems[product.ind(row, col)] += this->elems[this->ind(row, inner)] * rhs.elems[rhs.ind(inner, col)];
+            }
+        }
+    }
+    this->overwrite(product);
+    return *this;
+}
+
+Matrix& Matrix::operator*(const double& rhs)
+{
+    for (unsigned int u = 0; u < this->elems.size(); ++u)
+    {
+        this->elems[u] = rhs * this->elems[u];
+    }
+    
+    return *this;
+}
+
+Matrix& Matrix::operator+(const Matrix& rhs)
+{
+    if(this->rows != rhs.rows || this->columns != rhs.columns)
+    {
+        throw std::invalid_argument("Matrix dimensions do not agree!");
+    }
+
+    for(unsigned int u = 0; u < this->elems.size(); ++u)
+    {
+        this->elems[u] = this->elems[u] + rhs.elems[u];
+    }
+
+    return *this;
+}
+
+Matrix& Matrix::operator-(const Matrix& rhs)
+{
+    if(this->rows != rhs.rows || this->columns != rhs.columns)
+    {
+        throw std::invalid_argument("Matrix dimensions do not agree!");
+    }
+
+    for(unsigned int u = 0; u < this->elems.size(); ++u)
+    {
+        this->elems[u] = this->elems[u] - rhs.elems[u];
+    }
+
+    return *this;
+}
+
+Matrix& Matrix::operator=(const Matrix& rhs)
+{   
+    if(this->rows != rhs.rows || this->columns != rhs.columns)
+    {
+        throw std::invalid_argument("Matrix dimensions do not agree!");
+    }
+
+    this->elems = rhs.elems;
+    
+    return *this;
+}
+
+Matrix Matrix::multiply(const Matrix& rhs) const
 {   
     if(this->columns != rhs.rows)
     {
@@ -223,7 +298,7 @@ Matrix Matrix::operator*(const Matrix& rhs) const
     return product;
 }
 
-Matrix Matrix::operator*(const double& rhs) const
+Matrix Matrix::multiply(const double& rhs) const
 {
     Matrix product(this->rows, this->columns);
 
@@ -235,7 +310,24 @@ Matrix Matrix::operator*(const double& rhs) const
     return product;
 }
 
-Matrix Matrix::operator-(const Matrix& rhs) const
+Matrix Matrix::add(const Matrix& rhs) const
+{
+    if(this->rows != rhs.rows || this->columns != rhs.columns)
+    {
+        throw std::invalid_argument("Matrix dimensions do not agree!");
+    }
+
+    Matrix sum(this->rows, this->columns);
+
+    for(unsigned int u = 0; u < this->elems.size(); ++u)
+    {
+        sum.elems[u] = this->elems[u] + rhs.elems[u];
+    }
+
+    return sum;
+}
+
+Matrix Matrix::subtract(const Matrix& rhs) const
 {
     if(this->rows != rhs.rows || this->columns != rhs.columns)
     {
@@ -250,35 +342,6 @@ Matrix Matrix::operator-(const Matrix& rhs) const
     }
 
     return difference;
-}
-
-Matrix Matrix::operator+(const Matrix& rhs) const
-{
-    if(this->rows != rhs.rows || this->columns != rhs.columns)
-    {
-        throw std::invalid_argument("Matrix dimensions do not agree!");
-    }
-
-    Matrix sum(this->rows, this->columns);
-
-    for(unsigned int u = 0; u < this->elems.size(); ++u)
-    {
-        sum.elems[u] = this->elems[u] - rhs.elems[u];
-    }
-
-    return sum;
-}
-
-Matrix& Matrix::operator=(const Matrix& rhs)
-{   
-    if(this->rows != rhs.rows || this->columns != rhs.columns)
-    {
-        throw std::invalid_argument("Matrix dimensions do not agree!");
-    }
-
-    this->elems = rhs.elems;
-    
-    return *this;
 }
 
 Matrix Matrix::solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0, double omega, double epsilon, unsigned int max_count)
@@ -307,7 +370,7 @@ Matrix Matrix::solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0, doub
     {   
         flag = false;
 
-        r = (b - (A * x));
+        r = b.subtract(A.multiply(x));
         for(unsigned int u = 0; u < A.rows; ++u)
         {
             x.elems[u] = x.elems[u] + omega * (r.elems[u] / A.elems[A.ind(u+1,u+1)]); 
@@ -353,7 +416,7 @@ Matrix Matrix::solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0, double o
     {   
         flag = false;
 
-        r = (b - (A * x));
+        r = b.subtract(A.multiply(x));
         for(unsigned int u = 0; u < A.rows; ++u)
         {
             sum = 0;
@@ -407,9 +470,9 @@ Matrix Matrix::solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon, un
     {
         count ++;
         
-        step_length = (r.scalar_prod(r)) / (r.scalar_prod(A * r));
+        step_length = (r.scalar_prod(r)) / (r.scalar_prod(A.multiply(r)));
         x = (x + (r * step_length));
-        r = (b - (A * x));
+        r = (b.subtract(A.multiply(x)));
 
         if(count > max_count)
         {

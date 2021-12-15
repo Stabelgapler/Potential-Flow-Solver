@@ -141,14 +141,24 @@ class Matrix
     void print() const;
     void print_MATLAB() const;
 
-    Matrix operator*(const Matrix& rhs) const; //Should operate on object --> performance
-    Matrix operator*(const double& rhs) const;
-    Matrix operator-(const Matrix& rhs) const;
-    Matrix operator+(const Matrix& rhs) const;
+    //Operate on object --> Fast
+    Matrix& operator*(const Matrix& rhs);
+    Matrix& operator*(const double& rhs);
+    Matrix& operator-(const Matrix& rhs);
+    Matrix& operator+(const Matrix& rhs);
+    
     Matrix& operator=(const Matrix& rhs);
 
+    //Operate on copy --> leave object const, are however slower
+    Matrix multiply(const Matrix& rhs) const;
+    Matrix multiply(const double& rhs) const;
+    Matrix add(const Matrix& rhs) const;
+    Matrix subtract(const Matrix& rhs) const;
+
     static Matrix solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.0, double epsilon = 1E-5, unsigned int max_count = 7500);
+    //Usually faster than the Jacobi method
     static Matrix solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.5, double epsilon = 1E-5, unsigned int max_count = 7500);
+    //WIP not correctly implemented
     static Matrix solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon = 1E-5, unsigned int max_count = 7500);
 };
 
