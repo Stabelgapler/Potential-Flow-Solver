@@ -17,7 +17,7 @@
 //window coordinate transform
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
 //split vec2d implementation to header and source file
-//Body vertex interpolation
+//Body vertex interpolation fix
 
 
 int main()
