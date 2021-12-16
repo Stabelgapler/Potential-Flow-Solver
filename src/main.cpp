@@ -12,13 +12,15 @@
 #include "physics.hpp"
 
 //ToDo
-//performance, i.e. consts and references, overload linalg library with two versions, on object and by value
+//Avoid dynamic memory allocation: safe for individual functions preallocated memory
 //replace gamma correction
 //window coordinate transform
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
 //split vec2d implementation to header and source file
 //Body vertex interpolation fix
-//Linear Algebra Revision 
+//Linear Algebra Revision --> efficient Matrix multiplication (compare to EIGEN library)
+//Change code: currently the whole linear system is recomputed every step, actually only the RHS (uniform flow) changes
+//Implement algorithm that integrates influence of arbitrary panel distribution on other panels --> setup LSE such that total flow through body is minimized (not only controll poitns)
 
 
 int main()
