@@ -1,0 +1,492 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 40.04      1.81     1.81 168777690     0.00     0.00  Point::calc_velocity(double*)
+ 25.44      2.96     1.15    15713     0.07     0.07  Matrix::multiply(Matrix const&) const
+ 10.84      3.45     0.49       81     6.05    20.25  Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int)
+  6.86      3.76     0.31                             _mcount_private
+  4.65      3.97     0.21                             __fentry__
+  4.20      4.16     0.19     1215     0.16     0.87  Physics::integrate_streamline(double, double, double, double)
+  2.88      4.29     0.13       81     1.60    13.44  Physics::calc_pressure_field(Scalar_Field&, double)
+  1.77      4.37     0.08 11566800     0.00     0.00  void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  0.66      4.40     0.03     1215     0.02     0.02  Physics::draw_streamline(sf::RenderWindow&, std::vector<vec2d, std::allocator<vec2d> >)
+  0.44      4.42     0.02  4884300     0.00     0.00  Vector_Field::get_entry_pos(unsigned int, unsigned int)
+  0.44      4.44     0.02    16281     0.00     0.01  Point::superpose_velocity(Vector_Field&)
+  0.44      4.46     0.02                             operator new[](unsigned long long)
+  0.44      4.48     0.02                             atan2
+  0.22      4.49     0.01  9817200     0.00     0.00  Vector_Field::add_entry(unsigned int, unsigned int, unsigned int, double)
+  0.22      4.50     0.01   437400     0.00     0.00  Scalar_Field::set_entry(unsigned int, unsigned int, double)
+  0.22      4.51     0.01    48600     0.00     0.00  Vector_Field::set_entry(unsigned int, unsigned int, unsigned int, double)
+  0.22      4.52     0.01                             operator delete[](void*)
+  0.00      4.52     0.00   839690     0.00     0.00  Uniform::calc_velocity(double*)
+  0.00      4.52     0.00   441450     0.00     0.00  Mapping::colormap_rgb(double, double, double, double)
+  0.00      4.52     0.00   437562     0.00     0.00  Mapping::gamma_corr(double, double)
+  0.00      4.52     0.00   437400     0.00     0.00  Scalar_Field::get_entry_pos(unsigned int, unsigned int)
+  0.00      4.52     0.00    56682     0.00     0.00  Matrix::set_elem(unsigned int, unsigned int, double)
+  0.00      4.52     0.00    32562     0.00     0.00  Matrix::get_elem(unsigned int, unsigned int) const
+  0.00      4.52     0.00    31674     0.00     0.00  Matrix::Matrix(unsigned int, unsigned int)
+  0.00      4.52     0.00    15713     0.00     0.00  std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&)
+  0.00      4.52     0.00    10618     0.00     0.00  void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&)
+  0.00      4.52     0.00      402     0.00     0.00  void std::vector<double, std::allocator<double> >::emplace_back<double>(double&&)
+  0.00      4.52     0.00      325     0.00     0.00  Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double)
+  0.00      4.52     0.00      243     0.00     0.00  Matrix::operator=(Matrix const&)
+  0.00      4.52     0.00       81     0.00     0.07  Scalar_Field::draw_field_2(sf::RenderWindow&, double)
+  0.00      4.52     0.00       81     0.00     0.00  Vector_Field::draw_field(sf::RenderWindow&, double, double)
+  0.00      4.52     0.00       81     0.00    20.25  Body::calc_source_panel()
+  0.00      4.52     0.00       81     0.00     0.00  Body::draw_body(sf::RenderWindow&)
+  0.00      4.52     0.00       81     0.00     0.00  Matrix::operator*(double const&)
+  0.00      4.52     0.00       81     0.00     0.00  Source::draw_sources(sf::RenderWindow&)
+  0.00      4.52     0.00       81     0.00     0.00  Source::remove_sources(unsigned int, unsigned int)
+  0.00      4.52     0.00       81     0.00     0.00  Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double)
+  0.00      4.52     0.00       81     0.00     0.00  Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int)
+  0.00      4.52     0.00       81     0.00     1.57  Physics::calc_velocity_field(Vector_Field&)
+  0.00      4.52     0.00       81     0.00     0.00  Uniform::calc_angle()
+  0.00      4.52     0.00       81     0.00     0.00  Uniform::change_flow()
+  0.00      4.52     0.00       81     0.00     0.00  Uniform::superpose_velocity(Vector_Field&)
+  0.00      4.52     0.00        9     0.00     0.00  Input_Reader::get_double(double*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      4.52     0.00        6     0.00     0.00  Input_Reader::get_int(int*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      4.52     0.00        3     0.00     0.00  Input_Reader::Input_Reader(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      4.52     0.00        3     0.00     0.00  __gcc_deregister_frame
+  0.00      4.52     0.00        2     0.00     0.00  Input_Reader::~Input_Reader()
+  0.00      4.52     0.00        1     0.00     0.00  Input_Reader::get_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      4.52     0.00        1     0.00     0.00  Input_Reader::get_Input()
+  0.00      4.52     0.00        1     0.00     0.00  Input_Reader::load_body()
+  0.00      4.52     0.00        1     0.00     0.00  Scalar_Field::Scalar_Field(unsigned int, unsigned int, double, double, double, double)
+  0.00      4.52     0.00        1     0.00     0.00  Vector_Field::~Vector_Field()
+  0.00      4.52     0.00        1     0.00     0.00  Body::set_offset(double, double)
+  0.00      4.52     0.00        1     0.00     0.00  Body::setup_source_panel()
+  0.00      4.52     0.00        1     0.00     0.00  Body::set_scale(double, double)
+  0.00      4.52     0.00        1     0.00     0.00  Body::Body(std::vector<vec2d, std::allocator<vec2d> >)
+  0.00      4.52     0.00        1     0.00     0.00  Uniform::Uniform(double, double)
+  0.00      4.52     0.00        1     0.00     0.00  Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+  0.00      4.52     0.00        1     0.00     0.00  void std::vector<Vector_Field*, std::allocator<Vector_Field*> >::_M_realloc_insert<Vector_Field*>(__gnu_cxx::__normal_iterator<Vector_Field**, std::vector<Vector_Field*, std::allocator<Vector_Field*> > >, Vector_Field*&&)
+  0.00      4.52     0.00        1     0.00     0.00  void std::vector<Body*, std::allocator<Body*> >::_M_realloc_insert<Body*>(__gnu_cxx::__normal_iterator<Body**, std::vector<Body*, std::allocator<Body*> > >, Body*&&)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.22% of 4.52 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     87.4    0.00    3.95                 main [1]
+                0.00    1.64      81/81          Body::calc_source_panel() [3]
+                0.13    0.96      81/81          Physics::calc_pressure_field(Scalar_Field&, double) [6]
+                0.19    0.87    1215/1215        Physics::integrate_streamline(double, double, double, double) [7]
+                0.00    0.13      81/81          Physics::calc_velocity_field(Vector_Field&) [10]
+                0.03    0.00    1215/1215        Physics::draw_streamline(sf::RenderWindow&, std::vector<vec2d, std::allocator<vec2d> >) [14]
+                0.00    0.01      81/81          Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+                0.00    0.00      81/81          Vector_Field::draw_field(sf::RenderWindow&, double, double) [23]
+                0.00    0.00      81/81          Source::draw_sources(sf::RenderWindow&) [147]
+                0.00    0.00      81/81          Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int) [150]
+                0.00    0.00      81/81          Uniform::change_flow() [152]
+                0.00    0.00      81/81          Source::remove_sources(unsigned int, unsigned int) [148]
+                0.00    0.00      81/81          Body::draw_body(sf::RenderWindow&) [145]
+                0.00    0.00       3/3           __gcc_deregister_frame [156]
+                0.00    0.00       2/3           Input_Reader::Input_Reader(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [155]
+                0.00    0.00       2/2           Input_Reader::~Input_Reader() [157]
+                0.00    0.00       1/1           Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+                0.00    0.00       1/1           Scalar_Field::Scalar_Field(unsigned int, unsigned int, double, double, double, double) [161]
+                0.00    0.00       1/325         Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+                0.00    0.00       1/1           Uniform::Uniform(double, double) [167]
+                0.00    0.00       1/1           Input_Reader::get_Input() [159]
+                0.00    0.00       1/1           Input_Reader::load_body() [160]
+                0.00    0.00       1/1           Body::set_offset(double, double) [163]
+                0.00    0.00       1/1           Body::set_scale(double, double) [165]
+                0.00    0.00       1/1           Body::setup_source_panel() [164]
+                0.00    0.00       1/1           Vector_Field::~Vector_Field() [162]
+-----------------------------------------------
+                0.87    0.00 80860290/168777690     Physics::integrate_streamline(double, double, double, double) [7]
+                0.94    0.00 87917400/168777690     Physics::calc_pressure_field(Scalar_Field&, double) [6]
+[2]     40.0    1.81    0.00 168777690         Point::calc_velocity(double*) [2]
+-----------------------------------------------
+                0.00    1.64      81/81          main [1]
+[3]     36.3    0.00    1.64      81         Body::calc_source_panel() [3]
+                0.49    1.15      81/81          Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+                0.00    0.00   32562/32562       Matrix::get_elem(unsigned int, unsigned int) const [138]
+                0.00    0.00   16281/56682       Matrix::set_elem(unsigned int, unsigned int, double) [137]
+                0.00    0.00     162/243         Matrix::operator=(Matrix const&) [144]
+                0.00    0.00      81/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+                0.00    0.00      81/81          Matrix::operator*(double const&) [146]
+-----------------------------------------------
+                0.49    1.15      81/81          Body::calc_source_panel() [3]
+[4]     36.3    0.49    1.15      81         Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+                1.15    0.00   15713/15713       Matrix::multiply(Matrix const&) const [5]
+                0.00    0.00   15875/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+                0.00    0.00   15713/15713       std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [140]
+                0.00    0.00      81/243         Matrix::operator=(Matrix const&) [144]
+-----------------------------------------------
+                1.15    0.00   15713/15713       Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+[5]     25.4    1.15    0.00   15713         Matrix::multiply(Matrix const&) const [5]
+                0.00    0.00   15713/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+-----------------------------------------------
+                0.13    0.96      81/81          main [1]
+[6]     24.1    0.13    0.96      81         Physics::calc_pressure_field(Scalar_Field&, double) [6]
+                0.94    0.00 87917400/168777690     Point::calc_velocity(double*) [2]
+                0.01    0.00  437400/437400      Scalar_Field::set_entry(unsigned int, unsigned int, double) [18]
+                0.00    0.01  437400/437400      Scalar_Field::get_entry_pos(unsigned int, unsigned int) [21]
+                0.00    0.00  437400/839690      Uniform::calc_velocity(double*) [134]
+-----------------------------------------------
+                0.19    0.87    1215/1215        main [1]
+[7]     23.4    0.19    0.87    1215         Physics::integrate_streamline(double, double, double, double) [7]
+                0.87    0.00 80860290/168777690     Point::calc_velocity(double*) [2]
+                0.00    0.00  402290/839690      Uniform::calc_velocity(double*) [134]
+                0.00    0.00   10591/10618       void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&) [141]
+-----------------------------------------------
+                                                 <spontaneous>
+[8]      6.9    0.31    0.00                 _mcount_private [8]
+-----------------------------------------------
+                                                 <spontaneous>
+[9]      4.6    0.21    0.00                 __fentry__ [9]
+-----------------------------------------------
+                0.00    0.13      81/81          main [1]
+[10]     2.8    0.00    0.13      81         Physics::calc_velocity_field(Vector_Field&) [10]
+                0.02    0.10   16281/16281       Point::superpose_velocity(Vector_Field&) [11]
+                0.01    0.00   48600/48600       Vector_Field::set_entry(unsigned int, unsigned int, unsigned int, double) [19]
+                0.00    0.00      81/81          Uniform::superpose_velocity(Vector_Field&) [24]
+-----------------------------------------------
+                0.02    0.10   16281/16281       Physics::calc_velocity_field(Vector_Field&) [10]
+[11]     2.6    0.02    0.10   16281         Point::superpose_velocity(Vector_Field&) [11]
+                0.02    0.07 4884300/4884300     Vector_Field::get_entry_pos(unsigned int, unsigned int) [12]
+                0.01    0.00 9768600/9817200     Vector_Field::add_entry(unsigned int, unsigned int, unsigned int, double) [17]
+-----------------------------------------------
+                0.02    0.07 4884300/4884300     Point::superpose_velocity(Vector_Field&) [11]
+[12]     1.9    0.02    0.07 4884300         Vector_Field::get_entry_pos(unsigned int, unsigned int) [12]
+                0.07    0.00 9768600/11566800     void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [13]
+-----------------------------------------------
+                0.00    0.00   48600/11566800     Vector_Field::draw_field(sf::RenderWindow&, double, double) [23]
+                0.01    0.00  874800/11566800     Scalar_Field::get_entry_pos(unsigned int, unsigned int) [21]
+                0.01    0.00  874800/11566800     Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+                0.07    0.00 9768600/11566800     Vector_Field::get_entry_pos(unsigned int, unsigned int) [12]
+[13]     1.8    0.08    0.00 11566800         void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [13]
+-----------------------------------------------
+                0.03    0.00    1215/1215        main [1]
+[14]     0.7    0.03    0.00    1215         Physics::draw_streamline(sf::RenderWindow&, std::vector<vec2d, std::allocator<vec2d> >) [14]
+-----------------------------------------------
+                                                 <spontaneous>
+[15]     0.4    0.02    0.00                 atan2 [15]
+-----------------------------------------------
+                                                 <spontaneous>
+[16]     0.4    0.02    0.00                 operator new[](unsigned long long) [16]
+-----------------------------------------------
+                0.00    0.00   48600/9817200     Uniform::superpose_velocity(Vector_Field&) [24]
+                0.01    0.00 9768600/9817200     Point::superpose_velocity(Vector_Field&) [11]
+[17]     0.2    0.01    0.00 9817200         Vector_Field::add_entry(unsigned int, unsigned int, unsigned int, double) [17]
+-----------------------------------------------
+                0.01    0.00  437400/437400      Physics::calc_pressure_field(Scalar_Field&, double) [6]
+[18]     0.2    0.01    0.00  437400         Scalar_Field::set_entry(unsigned int, unsigned int, double) [18]
+-----------------------------------------------
+                0.01    0.00   48600/48600       Physics::calc_velocity_field(Vector_Field&) [10]
+[19]     0.2    0.01    0.00   48600         Vector_Field::set_entry(unsigned int, unsigned int, unsigned int, double) [19]
+-----------------------------------------------
+                                                 <spontaneous>
+[20]     0.2    0.01    0.00                 operator delete[](void*) [20]
+-----------------------------------------------
+                0.00    0.01  437400/437400      Physics::calc_pressure_field(Scalar_Field&, double) [6]
+[21]     0.1    0.00    0.01  437400         Scalar_Field::get_entry_pos(unsigned int, unsigned int) [21]
+                0.01    0.00  874800/11566800     void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [13]
+-----------------------------------------------
+                0.00    0.01      81/81          main [1]
+[22]     0.1    0.00    0.01      81         Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+                0.01    0.00  874800/11566800     void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [13]
+                0.00    0.00  437562/437562      Mapping::gamma_corr(double, double) [136]
+                0.00    0.00  437400/441450      Mapping::colormap_rgb(double, double, double, double) [135]
+                0.00    0.00      81/81          Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double) [149]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[23]     0.0    0.00    0.00      81         Vector_Field::draw_field(sf::RenderWindow&, double, double) [23]
+                0.00    0.00   48600/11566800     void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&) [13]
+-----------------------------------------------
+                0.00    0.00      81/81          Physics::calc_velocity_field(Vector_Field&) [10]
+[24]     0.0    0.00    0.00      81         Uniform::superpose_velocity(Vector_Field&) [24]
+                0.00    0.00   48600/9817200     Vector_Field::add_entry(unsigned int, unsigned int, unsigned int, double) [17]
+-----------------------------------------------
+                0.00    0.00  402290/839690      Physics::integrate_streamline(double, double, double, double) [7]
+                0.00    0.00  437400/839690      Physics::calc_pressure_field(Scalar_Field&, double) [6]
+[134]    0.0    0.00    0.00  839690         Uniform::calc_velocity(double*) [134]
+-----------------------------------------------
+                0.00    0.00    4050/441450      Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double) [149]
+                0.00    0.00  437400/441450      Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+[135]    0.0    0.00    0.00  441450         Mapping::colormap_rgb(double, double, double, double) [135]
+-----------------------------------------------
+                0.00    0.00  437562/437562      Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+[136]    0.0    0.00    0.00  437562         Mapping::gamma_corr(double, double) [136]
+-----------------------------------------------
+                0.00    0.00   16281/56682       Body::calc_source_panel() [3]
+                0.00    0.00   40401/56682       Body::setup_source_panel() [164]
+[137]    0.0    0.00    0.00   56682         Matrix::set_elem(unsigned int, unsigned int, double) [137]
+-----------------------------------------------
+                0.00    0.00   32562/32562       Body::calc_source_panel() [3]
+[138]    0.0    0.00    0.00   32562         Matrix::get_elem(unsigned int, unsigned int) const [138]
+-----------------------------------------------
+                0.00    0.00       1/31674       Scalar_Field::Scalar_Field(unsigned int, unsigned int, double, double, double, double) [161]
+                0.00    0.00       2/31674       Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+                0.00    0.00       2/31674       Body::Body(std::vector<vec2d, std::allocator<vec2d> >) [166]
+                0.00    0.00      81/31674       Body::calc_source_panel() [3]
+                0.00    0.00   15713/31674       Matrix::multiply(Matrix const&) const [5]
+                0.00    0.00   15875/31674       Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+[139]    0.0    0.00    0.00   31674         Matrix::Matrix(unsigned int, unsigned int) [139]
+-----------------------------------------------
+                0.00    0.00   15713/15713       Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+[140]    0.0    0.00    0.00   15713         std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&) [140]
+-----------------------------------------------
+                0.00    0.00       9/10618       Input_Reader::load_body() [160]
+                0.00    0.00      18/10618       Body::setup_source_panel() [164]
+                0.00    0.00   10591/10618       Physics::integrate_streamline(double, double, double, double) [7]
+[141]    0.0    0.00    0.00   10618         void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&) [141]
+-----------------------------------------------
+                0.00    0.00     402/402         Body::setup_source_panel() [164]
+[142]    0.0    0.00    0.00     402         void std::vector<double, std::allocator<double> >::emplace_back<double>(double&&) [142]
+-----------------------------------------------
+                0.00    0.00       1/325         main [1]
+                0.00    0.00      81/325         Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int) [150]
+                0.00    0.00     243/325         Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double) [149]
+[143]    0.0    0.00    0.00     325         Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+                0.00    0.00       2/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+                0.00    0.00       1/1           void std::vector<Vector_Field*, std::allocator<Vector_Field*> >::_M_realloc_insert<Vector_Field*>(__gnu_cxx::__normal_iterator<Vector_Field**, std::vector<Vector_Field*, std::allocator<Vector_Field*> > >, Vector_Field*&&) [169]
+-----------------------------------------------
+                0.00    0.00      81/243         Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [4]
+                0.00    0.00     162/243         Body::calc_source_panel() [3]
+[144]    0.0    0.00    0.00     243         Matrix::operator=(Matrix const&) [144]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[145]    0.0    0.00    0.00      81         Body::draw_body(sf::RenderWindow&) [145]
+-----------------------------------------------
+                0.00    0.00      81/81          Body::calc_source_panel() [3]
+[146]    0.0    0.00    0.00      81         Matrix::operator*(double const&) [146]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[147]    0.0    0.00    0.00      81         Source::draw_sources(sf::RenderWindow&) [147]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[148]    0.0    0.00    0.00      81         Source::remove_sources(unsigned int, unsigned int) [148]
+-----------------------------------------------
+                0.00    0.00      81/81          Scalar_Field::draw_field_2(sf::RenderWindow&, double) [22]
+[149]    0.0    0.00    0.00      81         Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double) [149]
+                0.00    0.00    4050/441450      Mapping::colormap_rgb(double, double, double, double) [135]
+                0.00    0.00     243/325         Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[150]    0.0    0.00    0.00      81         Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int) [150]
+                0.00    0.00      81/81          Uniform::calc_angle() [151]
+                0.00    0.00      81/325         Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+-----------------------------------------------
+                0.00    0.00      81/81          Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int) [150]
+[151]    0.0    0.00    0.00      81         Uniform::calc_angle() [151]
+-----------------------------------------------
+                0.00    0.00      81/81          main [1]
+[152]    0.0    0.00    0.00      81         Uniform::change_flow() [152]
+-----------------------------------------------
+                0.00    0.00       9/9           Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+[153]    0.0    0.00    0.00       9         Input_Reader::get_double(double*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [153]
+-----------------------------------------------
+                0.00    0.00       6/6           Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+[154]    0.0    0.00    0.00       6         Input_Reader::get_int(int*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [154]
+-----------------------------------------------
+                0.00    0.00       1/3           Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+                0.00    0.00       2/3           main [1]
+[155]    0.0    0.00    0.00       3         Input_Reader::Input_Reader(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [155]
+-----------------------------------------------
+                0.00    0.00       3/3           main [1]
+[156]    0.0    0.00    0.00       3         __gcc_deregister_frame [156]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[157]    0.0    0.00    0.00       2         Input_Reader::~Input_Reader() [157]
+-----------------------------------------------
+                0.00    0.00       1/1           Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+[158]    0.0    0.00    0.00       1         Input_Reader::get_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [158]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[159]    0.0    0.00    0.00       1         Input_Reader::get_Input() [159]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[160]    0.0    0.00    0.00       1         Input_Reader::load_body() [160]
+                0.00    0.00       9/10618       void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&) [141]
+                0.00    0.00       1/1           Body::Body(std::vector<vec2d, std::allocator<vec2d> >) [166]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[161]    0.0    0.00    0.00       1         Scalar_Field::Scalar_Field(unsigned int, unsigned int, double, double, double, double) [161]
+                0.00    0.00       1/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[162]    0.0    0.00    0.00       1         Vector_Field::~Vector_Field() [162]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[163]    0.0    0.00    0.00       1         Body::set_offset(double, double) [163]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[164]    0.0    0.00    0.00       1         Body::setup_source_panel() [164]
+                0.00    0.00   40401/56682       Matrix::set_elem(unsigned int, unsigned int, double) [137]
+                0.00    0.00     402/402         void std::vector<double, std::allocator<double> >::emplace_back<double>(double&&) [142]
+                0.00    0.00      18/10618       void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&) [141]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[165]    0.0    0.00    0.00       1         Body::set_scale(double, double) [165]
+-----------------------------------------------
+                0.00    0.00       1/1           Input_Reader::load_body() [160]
+[166]    0.0    0.00    0.00       1         Body::Body(std::vector<vec2d, std::allocator<vec2d> >) [166]
+                0.00    0.00       2/31674       Matrix::Matrix(unsigned int, unsigned int) [139]
+                0.00    0.00       1/1           void std::vector<Body*, std::allocator<Body*> >::_M_realloc_insert<Body*>(__gnu_cxx::__normal_iterator<Body**, std::vector<Body*, std::allocator<Body*> > >, Body*&&) [170]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[167]    0.0    0.00    0.00       1         Uniform::Uniform(double, double) [167]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[168]    0.0    0.00    0.00       1         Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [168]
+                0.00    0.00       9/9           Input_Reader::get_double(double*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [153]
+                0.00    0.00       6/6           Input_Reader::get_int(int*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [154]
+                0.00    0.00       1/3           Input_Reader::Input_Reader(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [155]
+                0.00    0.00       1/1           Input_Reader::get_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [158]
+-----------------------------------------------
+                0.00    0.00       1/1           Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [143]
+[169]    0.0    0.00    0.00       1         void std::vector<Vector_Field*, std::allocator<Vector_Field*> >::_M_realloc_insert<Vector_Field*>(__gnu_cxx::__normal_iterator<Vector_Field**, std::vector<Vector_Field*, std::allocator<Vector_Field*> > >, Vector_Field*&&) [169]
+-----------------------------------------------
+                0.00    0.00       1/1           Body::Body(std::vector<vec2d, std::allocator<vec2d> >) [166]
+[170]    0.0    0.00    0.00       1         void std::vector<Body*, std::allocator<Body*> >::_M_realloc_insert<Body*>(__gnu_cxx::__normal_iterator<Body**, std::vector<Body*, std::allocator<Body*> > >, Body*&&) [170]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+ [153] Input_Reader::get_double(double*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [145] Body::draw_body(sf::RenderWindow&) [151] Uniform::calc_angle()
+ [158] Input_Reader::get_string(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [165] Body::set_scale(double, double) [152] Uniform::change_flow()
+ [154] Input_Reader::get_int(int*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [166] Body::Body(std::vector<vec2d, std::allocator<vec2d> >) [134] Uniform::calc_velocity(double*)
+ [159] Input_Reader::get_Input() [2] Point::calc_velocity(double*) [24] Uniform::superpose_velocity(Vector_Field&)
+ [160] Input_Reader::load_body() [11] Point::superpose_velocity(Vector_Field&) [167] Uniform::Uniform(double, double)
+ [155] Input_Reader::Input_Reader(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) [4] Matrix::solve_LSE_GS(Matrix, Matrix, Matrix*, double, double, unsigned int) [168] Settings::initialize(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)
+ [157] Input_Reader::~Input_Reader() [137] Matrix::set_elem(unsigned int, unsigned int, double) [138] Matrix::get_elem(unsigned int, unsigned int) const
+  [22] Scalar_Field::draw_field_2(sf::RenderWindow&, double) [139] Matrix::Matrix(unsigned int, unsigned int) [5] Matrix::multiply(Matrix const&) const
+  [21] Scalar_Field::get_entry_pos(unsigned int, unsigned int) [144] Matrix::operator=(Matrix const&) [141] void std::vector<vec2d, std::allocator<vec2d> >::_M_realloc_insert<vec2d const&>(__gnu_cxx::__normal_iterator<vec2d*, std::vector<vec2d, std::allocator<vec2d> > >, vec2d const&)
+  [18] Scalar_Field::set_entry(unsigned int, unsigned int, double) [146] Matrix::operator*(double const&) [169] void std::vector<Vector_Field*, std::allocator<Vector_Field*> >::_M_realloc_insert<Vector_Field*>(__gnu_cxx::__normal_iterator<Vector_Field**, std::vector<Vector_Field*, std::allocator<Vector_Field*> > >, Vector_Field*&&)
+ [161] Scalar_Field::Scalar_Field(unsigned int, unsigned int, double, double, double, double) [147] Source::draw_sources(sf::RenderWindow&) [170] void std::vector<Body*, std::allocator<Body*> >::_M_realloc_insert<Body*>(__gnu_cxx::__normal_iterator<Body**, std::vector<Body*, std::allocator<Body*> > >, Body*&&)
+  [23] Vector_Field::draw_field(sf::RenderWindow&, double, double) [148] Source::remove_sources(unsigned int, unsigned int) [142] void std::vector<double, std::allocator<double> >::emplace_back<double>(double&&)
+  [12] Vector_Field::get_entry_pos(unsigned int, unsigned int) [136] Mapping::gamma_corr(double, double) [13] void std::vector<double, std::allocator<double> >::_M_realloc_insert<double const&>(__gnu_cxx::__normal_iterator<double*, std::vector<double, std::allocator<double> > >, double const&)
+  [17] Vector_Field::add_entry(unsigned int, unsigned int, unsigned int, double) [135] Mapping::colormap_rgb(double, double, double, double) [140] std::vector<double, std::allocator<double> >::operator=(std::vector<double, std::allocator<double> > const&)
+  [19] Vector_Field::set_entry(unsigned int, unsigned int, unsigned int, double) [149] Mapping::draw_colorbar(sf::RenderWindow&, double, double, double, double, double, double, double, double, double, double) [20] operator delete[](void*)
+ [143] Vector_Field::Vector_Field(unsigned int, unsigned int, double, double, double, double) [150] Mapping::draw_angle_of_attack(sf::RenderWindow&, double, double, unsigned int) [16] operator new[](unsigned long long)
+ [162] Vector_Field::~Vector_Field() [14] Physics::draw_streamline(sf::RenderWindow&, std::vector<vec2d, std::allocator<vec2d> >) [9] __fentry__
+ [163] Body::set_offset(double, double) [6] Physics::calc_pressure_field(Scalar_Field&, double) [156] __gcc_deregister_frame
+   [3] Body::calc_source_panel() [10] Physics::calc_velocity_field(Vector_Field&) [8] _mcount_private
+ [164] Body::setup_source_panel() [7] Physics::integrate_streamline(double, double, double, double) [15] atan2
