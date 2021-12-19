@@ -85,7 +85,14 @@ class Body
     public:
     static std::vector<Body *> Body_List;
 
-    Matrix panel_sol;
+    //Panel Methods:
+    Matrix LSE; //Linear System of equations
+    Matrix SOL; //Last solution vector, can be used as start for next iteration
+
+    std::vector<vec2d> panel_vertices;
+    std::vector<vec2d> panel_mid_points;
+    std::vector<double> panel_lengths;
+    std::vector<double> panel_angles;
 
     Body(std::vector<vec2d> nvertices);
 
@@ -97,7 +104,10 @@ class Body
 
     void get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const;
 
-    void calc_source_panel();
+    //Panel Methods:
+    void setup_source_panel(); //Determines LSE
+    void calc_source_panel(); //Solves LSE
+
     void calc_vortex_panel();
     
     void draw_body(sf::RenderWindow& window);

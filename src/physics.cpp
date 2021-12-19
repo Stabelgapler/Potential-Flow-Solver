@@ -380,7 +380,7 @@ void Physics::calc_velocity_field(Vector_Field& vfield)
 
 std::vector<Body *> Body::Body_List;
 
-Body::Body(std::vector<vec2d> nvertices): panel_sol(nvertices.size(), 1)
+Body::Body(std::vector<vec2d> nvertices): SOL(nvertices.size(), 1), LSE(nvertices.size(), nvertices.size())
 {   
     Body::Body_List.push_back(this);
 
@@ -431,7 +431,7 @@ void Body::interpolate_vertices()
     this->vertices = nvertices;
 
     Matrix nsol(nvertices.size(),1);
-    this->panel_sol.overwrite(nsol); 
+    this->SOL.overwrite(nsol); 
 }
 
 void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
@@ -446,56 +446,63 @@ void Body::get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const
     return;
 }
 
-//Calculates the source panel method, i.e. source distribution on body surface to make its surface a streamline
-void Body::calc_source_panel()
+//Sets up the Linear system of equation for the classic source panel method
+void Body::setup_source_panel()
 {   
-    std::vector<vec2d> scaled_vertices; //Vertices defining panels
-    std::vector<vec2d> mid_points; //Points in the middle of the panels
-    std::vector<double> length; //Panel length
-    std::vector<double> angle; //Panel angle
-
     //Setup panels
-    get_scaled_vertices(scaled_vertices);
-    unsigned int end_idx = scaled_vertices.size()-1;
+    get_scaled_vertices(this->panel_vertices);
+    unsigned int end_idx = this->panel_vertices.size()-1;
 
     for(unsigned int u = 0; u < end_idx; ++u)
     {   
-        mid_points.push_back(scaled_vertices[u].add(scaled_vertices[u+1]) / 2.0);
-        length.push_back(scaled_vertices[u+1].subtract(scaled_vertices[u]).magnitude());
-        angle.push_back(atan2((scaled_vertices[u+1].y - scaled_vertices[u].y), (scaled_vertices[u+1].x - scaled_vertices[u].x)));
+        this->panel_mid_points.push_back(this->panel_vertices[u].add(this->panel_vertices[u+1]) / 2.0);
+        this->panel_lengths.push_back(this->panel_vertices[u+1].subtract(this->panel_vertices[u]).magnitude());
+        this->panel_angles.push_back(atan2((this->panel_vertices[u+1].y - this->panel_vertices[u].y), (this->panel_vertices[u+1].x - this->panel_vertices[u].x)));
     }
 
-    mid_points.push_back(scaled_vertices[end_idx].add(scaled_vertices[0]) / 2.0);
-    length.push_back(sqrt((scaled_vertices[0].x - scaled_vertices[end_idx].x) * (scaled_vertices[0].x - scaled_vertices[end_idx].x) + (scaled_vertices[0].y - scaled_vertices[end_idx].y) * (scaled_vertices[0].y - scaled_vertices[end_idx].y)));
-    angle.push_back(atan2((scaled_vertices[0].y - scaled_vertices[end_idx].y), (scaled_vertices[0].x - scaled_vertices[end_idx].x)));
+    this->panel_mid_points.push_back(this->panel_vertices[end_idx].add(this->panel_vertices[0]) / 2.0);
+    this->panel_lengths.push_back(sqrt((this->panel_vertices[0].x - this->panel_vertices[end_idx].x) * (this->panel_vertices[0].x - this->panel_vertices[end_idx].x) + (this->panel_vertices[0].y - this->panel_vertices[end_idx].y) * (this->panel_vertices[0].y - this->panel_vertices[end_idx].y)));
+    this->panel_angles.push_back(atan2((this->panel_vertices[0].y - this->panel_vertices[end_idx].y), (this->panel_vertices[0].x - this->panel_vertices[end_idx].x)));
+
 
     //Assemble linear system of equations
-    Matrix LSE(mid_points.size(), mid_points.size());
-    Matrix RHS(mid_points.size(), 1);
     double A, B, C, D, E, S, INTEGRAL;
+
+    for(unsigned int u = 0; u < this->LSE.rows; ++u)
+    {
+        for(unsigned int v = 0; v < this->LSE.columns; ++v)
+        {
+            if(u == v){this->LSE.set_elem(u+1,v+1,M_PI);}
+            else{
+                A = -(this->panel_mid_points[u].x - this->panel_vertices[v].x) * cos(this->panel_angles[v]) - (this->panel_mid_points[u].y - this->panel_vertices[v].y) * sin(this->panel_angles[v]);
+                B = (this->panel_mid_points[u].x - this->panel_vertices[v].x) * (this->panel_mid_points[u].x - this->panel_vertices[v].x) + (this->panel_mid_points[u].y - this->panel_vertices[v].y) * (this->panel_mid_points[u].y - this->panel_vertices[v].y);
+                C = sin(this->panel_angles[u] - this->panel_angles[v]);
+                D = -(this->panel_mid_points[u].x - this->panel_vertices[v].x) * sin(this->panel_angles[u]) + (this->panel_mid_points[u].y - this->panel_vertices[v].y) * cos(this->panel_angles[u]);
+                E = sqrt(B - A*A);
+                S = this->panel_lengths[v];
+                INTEGRAL = (C/2) * log((S*S + 2*A*S + B) / B) + ((D - A*C) / E) * (atan((S + A) / E) - atan(A / E));
+                
+                this->LSE.set_elem(u+1,v+1,INTEGRAL);
+            }
+        }
+    }
+
+    return;
+}
+
+//Calculates the source panel method, i.e. source distribution on body surface to make its surface a streamline
+void Body::calc_source_panel()
+{   
+    //Assemble right hand side of linear system 
+    Matrix RHS(this->LSE.rows, 1);
     double Vx = dynamic_cast<Uniform*>(Source::Source_List[0])->x_vel;
     double Vy = dynamic_cast<Uniform*>(Source::Source_List[0])->y_vel;
     double V = sqrt(Vx * Vx + Vy * Vy);
     double Vangle = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle();
 
-    for(unsigned int u = 0; u < LSE.rows; ++u)
+    for(unsigned int u = 0; u < this->LSE.rows; ++u)
     {
-        for(unsigned int v = 0; v < LSE.columns; ++v)
-        {
-            if(u == v){LSE.set_elem(u+1,v+1,M_PI);}
-            else{
-                A = -(mid_points[u].x - scaled_vertices[v].x) * cos(angle[v]) - (mid_points[u].y - scaled_vertices[v].y) * sin(angle[v]);
-                B = (mid_points[u].x - scaled_vertices[v].x) * (mid_points[u].x - scaled_vertices[v].x) + (mid_points[u].y - scaled_vertices[v].y) * (mid_points[u].y - scaled_vertices[v].y);
-                C = sin(angle[u] - angle[v]);
-                D = -(mid_points[u].x - scaled_vertices[v].x) * sin(angle[u]) + (mid_points[u].y - scaled_vertices[v].y) * cos(angle[u]);
-                E = sqrt(B - A*A);
-                S = length[v];
-                INTEGRAL = (C/2) * log((S*S + 2*A*S + B) / B) + ((D - A*C) / E) * (atan((S + A) / E) - atan(A / E));
-                
-                LSE.set_elem(u+1,v+1,INTEGRAL);
-            }
-        }
-        RHS.set_elem(u+1,1, 2 * M_PI * V * sin(angle[u] - Vangle));
+        RHS.set_elem(u+1,1, 2 * M_PI * V * sin(this->panel_angles[u] - Vangle));
     }
 
     //Solve using Gauss Seidel iteration
@@ -503,15 +510,15 @@ void Body::calc_source_panel()
     {
         RHS = RHS * -1;
     }
-    this->panel_sol = Matrix::solve_LGS_GS(LSE, RHS, &this->panel_sol, 1.8);
+    this->SOL = Matrix::solve_LSE_GS(this->LSE, RHS, &this->SOL, 1.8);
 
-    //Place source distribution and calculate net source strength
+    //Distribute sources and calculate net source strength
     double net_source = 0;
 
-    for(unsigned int u = 0; u < this->panel_sol.rows; ++u)
+    for(unsigned int u = 0; u < this->SOL.rows; ++u)
     {   
-        net_source += this->panel_sol.get_elem(u+1,1) * length[u];
-        Point* temp = new Point(mid_points[u].x + this->offset_x, -mid_points[u].y + this->offset_y, this->panel_sol.get_elem(u+1,1));
+        net_source += this->SOL.get_elem(u+1,1) * this->panel_lengths[u];
+        Point* temp = new Point(this->panel_mid_points[u].x + this->offset_x, -this->panel_mid_points[u].y + this->offset_y, this->SOL.get_elem(u+1,1));
     }
 
     std::cout << "Net-Panel-Source-Strength: " << net_source << "\n";
@@ -577,7 +584,7 @@ void Body::calc_vortex_panel()
         RHS.set_elem(u+1,1, -2 * M_PI * V * sin(angle[u] - Vangle));
     }
 
-    this->panel_sol = Matrix::solve_LGS_Jacobi(LSE, RHS, &this->panel_sol, 1);
+    this->panel_sol = Matrix::solve_LSE_Jacobi(LSE, RHS, &this->panel_sol, 1);
 
     double net_source = 0;
 
