@@ -4,6 +4,8 @@
 #include <vector>
 #include <stdexcept>
 
+#include "immintrin.h" //SIMD AVX
+
 #include "linalg.hpp"
 #include "utility.hpp"
 
@@ -344,17 +346,33 @@ Matrix Matrix::subtract(const Matrix& rhs) const
     return difference;
 }
 
-Matrix Matrix::solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0, double omega, double epsilon, unsigned int max_count)
+//WIP
+void Matrix::multiply(const Matrix& lhs, const Matrix& rhs, Matrix& res) const
+{   
+    //Pad data to be visible by 4
+    //Load data from unaligned memory
+    __m256d vec_lhs = _mm256_loadu_pd(&lhs.elems[0]); //n x m, row major order
+    __m256d vec_rhs = _mm256_loadu_pd(&rhs.elems[0]); //m x k
+    __m256d vec_res = _mm256_setzero_pd(); //n x k
+    
+    //_mm256_fmadd_pd(vec_lhs, vec_rhs, vec_res);
+    vec_res = _mm256_add_pd(vec_lhs, vec_rhs);
+
+    double* result = (double*)&vec_res;
+    printf("%lf %lf %lf %lf\n", result[0], result[1], result[2], result[3]);
+}
+
+Matrix Matrix::solve_LSE_Jacobi(const Matrix A, const Matrix b, Matrix* x0, double omega, double epsilon, unsigned int max_count)
 {
     if(A.rows != b.rows)
     {
-        throw std::invalid_argument("Cant solve LGS, Dimensions do not agree!");
+        throw std::invalid_argument("Cant solve LSE, Dimensions do not agree!");
     }
     for(unsigned int u = 1; u <= A.rows; ++u)
     {
         if(A.elems[A.ind(u,u)] == 0)
         {
-            throw std::invalid_argument("Cant solve LGS, Cant invert Diagonal!");
+            throw std::invalid_argument("Cant solve LSE, Cant invert Diagonal!");
         }
     }
 
@@ -379,26 +397,26 @@ Matrix Matrix::solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0, doub
         count ++;
         if(count > max_count)
         {
-            std::cout << "LGS Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
+            std::cout << "LSE Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
             return x;
         }
     }
 
-    std::cout << "Solved LGS in " << count << " steps!" << std::endl;
+    std::cout << "Solved LSE in " << count << " steps!" << std::endl;
     return x;
 }
 
-Matrix Matrix::solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0, double omega, double epsilon, unsigned int max_count)
+Matrix Matrix::solve_LSE_GS(const Matrix A, const Matrix b, Matrix* x0, double omega, double epsilon, unsigned int max_count)
 {
     if(A.rows != b.rows)
     {
-        throw std::invalid_argument("Cant solve LGS, Dimensions do not agree!");
+        throw std::invalid_argument("Cant solve LSE, Dimensions do not agree!");
     }
     for(unsigned int u = 1; u <= A.rows; ++u)
     {
         if(A.elems[A.ind(u,u)] == 0)
         {
-            throw std::invalid_argument("Cant solve LGS, Cant invert Diagonal!");
+            throw std::invalid_argument("Cant solve LSE, Cant invert Diagonal!");
         }
     }
 
@@ -432,20 +450,20 @@ Matrix Matrix::solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0, double o
 
         if(++count > max_count)
         {
-            std::cout << "LGS Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
+            std::cout << "LSE Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
             return x;
         }
     }
 
-    std::cout << "Solved LGS in " << count << " steps!" << std::endl;
+    std::cout << "Solved LSE in " << count << " steps!" << std::endl;
     return x;
 }
 
-Matrix Matrix::solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon, unsigned int max_count)
+Matrix Matrix::solve_LSE_Grad(const Matrix A, const Matrix b, double epsilon, unsigned int max_count)
 {
     if(A.columns != b.rows)
     {
-        throw std::invalid_argument("Cant solve LGS, Dimensions do not agree!");
+        throw std::invalid_argument("Cant solve LSE, Dimensions do not agree!");
     }
     for(unsigned int u = 1; u <= A.rows; ++u)
     {   
@@ -453,7 +471,7 @@ Matrix Matrix::solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon, un
         {
             if(A.elems[A.ind(u,v)] != A.elems[A.ind(v,u)])
             {
-                throw std::invalid_argument("Cant solve LGS with Gradient-Method, Matrix not symmetric!");
+                throw std::invalid_argument("Cant solve LSE with Gradient-Method, Matrix not symmetric!");
             }
         }
     }
@@ -476,7 +494,7 @@ Matrix Matrix::solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon, un
 
         if(count > max_count)
         {
-            std::cout << "LGS Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
+            std::cout << "LSE Solution didnt converge, residual norm: " << r.get_frobenius() << std::endl;
             return x;
         }
 

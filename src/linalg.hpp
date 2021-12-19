@@ -120,7 +120,7 @@ class Matrix
     std::vector<double> elems;
 
     Matrix(unsigned int nrows, unsigned int ncols);
-
+    //Matrix elements are stored in a row-major order
     unsigned int ind(unsigned int row, unsigned int col) const;
 
     void set_elem(unsigned int row, unsigned int col, double value);
@@ -155,11 +155,14 @@ class Matrix
     Matrix add(const Matrix& rhs) const;
     Matrix subtract(const Matrix& rhs) const;
 
-    static Matrix solve_LGS_Jacobi(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.0, double epsilon = 1E-5, unsigned int max_count = 7500);
+    //SIMD operations
+    void multiply(const Matrix& lhs, const Matrix& rhs, Matrix& res) const;
+
+    static Matrix solve_LSE_Jacobi(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.0, double epsilon = 1E-5, unsigned int max_count = 7500);
     //Usually faster than the Jacobi method
-    static Matrix solve_LGS_GS(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.5, double epsilon = 1E-5, unsigned int max_count = 7500);
+    static Matrix solve_LSE_GS(const Matrix A, const Matrix b, Matrix* x0 = nullptr, double omega = 1.5, double epsilon = 1E-5, unsigned int max_count = 7500);
     //WIP not correctly implemented
-    static Matrix solve_LGS_Grad(const Matrix A, const Matrix b, double epsilon = 1E-5, unsigned int max_count = 7500);
+    static Matrix solve_LSE_Grad(const Matrix A, const Matrix b, double epsilon = 1E-5, unsigned int max_count = 7500);
 };
 
 class Vector_Field
