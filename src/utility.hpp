@@ -49,6 +49,7 @@ class Settings
     static sf::ContextSettings graphic_settings; //Graphic settings for SFML Library
 
     static double frame_rate;
+    static int max_frame; //After this number of frames the program terminates
     static int window_size_x;
     static int window_size_y;
     

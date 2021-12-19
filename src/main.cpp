@@ -21,7 +21,8 @@
 //Linear Algebra Revision --> efficient Matrix multiplication (compare to EIGEN library)
 //Change code: currently the whole linear system is recomputed every step, actually only the RHS (uniform flow) changes
 //Implement algorithm that integrates influence of arbitrary panel distribution on other panels --> setup LSE such that total flow through body is minimized (not only controll poitns)
-
+//SIMD operations
+//Timing superfunction for performance evaluation
 
 int main()
 {   
@@ -47,11 +48,12 @@ int main()
         //Body::Body_List[0]->interpolate_vertices(); //WIP
         Body::Body_List[0]->set_offset(Settings::body_offset_x, Settings::body_offset_y); //Center Body in Window    
         Body::Body_List[0]->set_scale(Settings::body_scale_x, Settings::body_scale_y); //Scale Body
+        Body::Body_List[0]->setup_source_panel(); //Setup LSE for source panel method
     }
 
     sf::RenderWindow window(sf::VideoMode(Settings::window_size_x, Settings::window_size_y), "Potential-Flow", sf::Style::Default, Settings::graphic_settings);
 
-    while (window.isOpen())
+    while (window.isOpen() && Settings::max_frame-- >= 0)
     {
         { //Accounts partially for the delay of the program runtime
             using namespace std::chrono;

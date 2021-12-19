@@ -416,6 +416,7 @@ sf::Font Settings::font = sf::Font();
 sf::ContextSettings Settings::graphic_settings; // 8
 
 double Settings::frame_rate = 30;
+int Settings::max_frame = 80;
 int Settings::window_size_x = 800;
 int Settings::window_size_y = 500;
 
@@ -444,6 +445,7 @@ void Settings::initialize(std::string file_path)
     Settings::graphic_settings.antialiasingLevel = 8; //Antialiasing "smoothes" edges
 
     settings_reader.get_double(&Settings::frame_rate, "frame-rate");
+    settings_reader.get_int(&Settings::max_frame, "max_frame_number");
     settings_reader.get_int(&Settings::window_size_x, "window_size_x");
     settings_reader.get_int(&Settings::window_size_y, "window_size_y");
 
