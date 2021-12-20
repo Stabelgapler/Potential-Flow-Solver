@@ -52,6 +52,8 @@ class Settings
     static int max_frame; //After this number of frames the program terminates
     static int window_size_x;
     static int window_size_y;
+
+    static double velocity_field_vector_scale; //Scales Velocity vectors
     
     static int use_body;
     static int invert_solution;

@@ -19,10 +19,9 @@
 //split vec2d implementation to header and source file
 //Body vertex interpolation fix
 //Linear Algebra Revision --> efficient Matrix multiplication (compare to EIGEN library)
-//Change code: currently the whole linear system is recomputed every step, actually only the RHS (uniform flow) changes
 //Implement algorithm that integrates influence of arbitrary panel distribution on other panels --> setup LSE such that total flow through body is minimized (not only controll poitns)
-//SIMD operations
-//Timing superfunction for performance evaluation
+//SIMD operations, Loop unrolling
+//Estimate source distribution based on panel angle, length and free flow --> accelerate convergence
 
 int main()
 {   
@@ -53,7 +52,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(Settings::window_size_x, Settings::window_size_y), "Potential-Flow", sf::Style::Default, Settings::graphic_settings);
 
-    while (window.isOpen() && Settings::max_frame-- >= 0)
+    while (window.isOpen() && Settings::max_frame-- != 0) //Set frame counter to negative number for infinite frames
     {
         { //Accounts partially for the delay of the program runtime
             using namespace std::chrono;
@@ -76,7 +75,7 @@ int main()
 
         //(*Scalar_Field::Scalar_Field_List[0]).draw_field(window, 10, 0.5); //Alternative way to visualize Pressure field
         (*Scalar_Field::Scalar_Field_List[0]).draw_field_2(window, 1);
-        (*Vector_Field::Vector_Field_List[0]).draw_field(window, 8, 1);
+        (*Vector_Field::Vector_Field_List[0]).draw_field(window, Settings::velocity_field_vector_scale, 1);
 
         Source::draw_sources(window);
         if(Settings::use_body){Body::Body_List[0]->draw_body(window);}
@@ -91,7 +90,7 @@ int main()
 
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow
 
-        Source::remove_sources(1); //Remove panel-source-solution for next frame
+        Source::remove_sources(1); //Remove panel-sources for next frame recomputation
 
         window.display();
 

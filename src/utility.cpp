@@ -420,6 +420,8 @@ int Settings::max_frame = 80;
 int Settings::window_size_x = 800;
 int Settings::window_size_y = 500;
 
+double Settings::velocity_field_vector_scale = 10;
+
 int Settings::use_body = 0;
 int Settings::invert_solution = 0;
 std::string Settings::body_file_path = "";
@@ -448,6 +450,8 @@ void Settings::initialize(std::string file_path)
     settings_reader.get_int(&Settings::max_frame, "max_frame_number");
     settings_reader.get_int(&Settings::window_size_x, "window_size_x");
     settings_reader.get_int(&Settings::window_size_y, "window_size_y");
+
+    settings_reader.get_double(&Settings::velocity_field_vector_scale, "velocity_field_vector_scale");
 
     settings_reader.get_int(&Settings::use_body, "use-body");
     settings_reader.get_int(&Settings::invert_solution, "invert_solution");

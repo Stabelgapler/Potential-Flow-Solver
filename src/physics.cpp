@@ -487,6 +487,12 @@ void Body::setup_source_panel()
         }
     }
 
+    //Invert solution if needed
+    if(Settings::invert_solution)
+    {
+        this->LSE = this->LSE * -1;
+    }
+
     return;
 }
 
@@ -506,10 +512,6 @@ void Body::calc_source_panel()
     }
 
     //Solve using Gauss Seidel iteration
-    if(Settings::invert_solution)
-    {
-        RHS = RHS * -1;
-    }
     this->SOL = Matrix::solve_LSE_GS(this->LSE, RHS, &this->SOL, 1.8);
 
     //Distribute sources and calculate net source strength
