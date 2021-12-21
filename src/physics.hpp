@@ -13,7 +13,7 @@ class Source
 
     double x_pos, y_pos, intensity;
 
-    virtual double* calc_velocity(double pos[]) = 0;
+    virtual void calc_velocity(double pos[]) = 0;
     virtual void superpose_velocity(Vector_Field& field) = 0;
 
     static void remove_sources(unsigned int ind_1, unsigned int ind_2 = 0);
@@ -30,7 +30,7 @@ class Uniform: public Source
 
     double calc_angle();
 
-    double* calc_velocity(double pos[]);
+    void calc_velocity(double pos[]);
     void superpose_velocity(Vector_Field& field);
 
     void change_flow();
@@ -41,7 +41,7 @@ class Point: public Source
     public:
     Point(double nx_pos, double ny_pos, double nintensity);
 
-    double* calc_velocity(double pos[]);
+    void calc_velocity(double pos[]);
     void superpose_velocity(Vector_Field& field);
 };
 
@@ -50,7 +50,7 @@ class Vortex: public Source
     public:
     Vortex(double nx_pos, double ny_pos, double nintensity);
 
-    double* calc_velocity(double pos[]);
+    void calc_velocity(double pos[]);
     void superpose_velocity(Vector_Field& field);
 };
 
@@ -59,7 +59,7 @@ class Doublet: public Source
     public:
     Doublet(double nx_pos, double ny_pos, double nintensity);
 
-    double* calc_velocity(double pos[]);
+    void calc_velocity(double pos[]);
     void superpose_velocity(Vector_Field& field);
 };
 

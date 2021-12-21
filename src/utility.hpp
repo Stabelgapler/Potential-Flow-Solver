@@ -89,6 +89,14 @@ class Functions
     static vec2d ellipse_coord(double phi);
 };
 
+//Pre allocated memory to save time for constant memory allocation
+class PreAllocated
+{
+    public:
+    //Physics --> Source::calc_velocity(double pos[]) + Derivations in Uniform, Point, Vortex, Doublet
+    static vec2d velocity; 
+};
+
 class Debug
 {
     public:

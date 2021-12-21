@@ -112,8 +112,6 @@ int main()
         text_str = "AOF: " + text_str + " deg";
         Mapping::print_to_screen(window, text_str, 100, 20);
 
-        //Mapping::draw_angle_of_attack(window, 100, 20);
-
         //Print net panel source strength
         sprintf(num_char, "%6.4f", Body::Body_List[0]->net_source_strength);
         text_str = num_char;
