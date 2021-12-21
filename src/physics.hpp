@@ -79,20 +79,21 @@ class Physics
 class Body
 {   
     protected:
-    std::vector<vec2d> vertices;
+    std::vector<vec2d> vertices; //Vertices, not scaled
+    std::vector<vec2d> panel_vertices; //Scaled vertices
+    std::vector<vec2d> panel_mid_points;
+    std::vector<double> panel_lengths;
+    std::vector<double> panel_angles;
+
     double offset_x, offset_y, scale_x, scale_y;
 
     public:
     static std::vector<Body *> Body_List;
+    double net_source_strength;
 
     //Panel Methods:
     Matrix LSE; //Linear System of equations
     Matrix SOL; //Last solution vector, can be used as start for next iteration
-
-    std::vector<vec2d> panel_vertices;
-    std::vector<vec2d> panel_mid_points;
-    std::vector<double> panel_lengths;
-    std::vector<double> panel_angles;
 
     Body(std::vector<vec2d> nvertices);
 
@@ -100,7 +101,7 @@ class Body
     void set_scale(double nscale_x, double nscale_y);
 
     void add_vertex(double x_pos, double y_pos);
-    void interpolate_vertices();
+    void interpolate_vertices(); //WIP
 
     void get_scaled_vertices(std::vector<vec2d>& scaled_vertices) const;
 

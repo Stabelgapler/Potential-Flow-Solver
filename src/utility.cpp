@@ -164,7 +164,7 @@ void Input_Reader::print(std::vector<double> vec)
     return;
 }
 
-void Input_Reader::load_body()
+void Input_Reader::load_body_from_memory()
 {   
     std::vector<vec2d> vertices;
     vec2d vertex;
@@ -211,6 +211,22 @@ void Input_Reader::load_body()
         Body* temp = new Body(vertices);
     }
     else throw std::invalid_argument("Could not open Input File: " + input_file_path);
+    
+    return;
+}
+
+void Input_Reader::load_body_from_function(std::vector<double>& param, vec2d (*function_ptr)(double))
+{   
+    std::vector<vec2d> vertices;
+    vec2d vertex;
+
+    for(unsigned int u = 0; u < param.size(); ++u)
+    {
+        vertex = function_ptr(param[u]);
+        vertices.push_back(vertex);
+    }
+
+    Body* temp = new Body(vertices);
     
     return;
 }
@@ -385,22 +401,14 @@ void Mapping::draw_colorbar(sf::RenderWindow& window, double x_pos, double y_pos
 
 }
 
-void Mapping::draw_angle_of_attack(sf::RenderWindow& window, double x_pos, double y_pos, unsigned int size)
+void Mapping::print_to_screen(sf::RenderWindow& window, std::string text_str, double x_pos, double y_pos, unsigned int size)
 {   
-    double aof = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle();
-    aof = aof * (180/(M_PI)); //Convert to degrees
-
-    char num_char[10];
-    sprintf(num_char, "%6.2f", aof);
-    std::string num_str(num_char);
-
     sf::Text text;
     text.setFont(Settings::font);
     text.setCharacterSize(size);
     text.setFillColor(sf::Color::White);
 
-    text.setString("AOF: " + num_str + " deg");
-    text.setOrigin(sf::Vector2f(0, text.getLocalBounds().height * 0.75));
+    text.setString(text_str);
     text.setPosition(x_pos + 10, y_pos);
     window.draw(text);
 }
@@ -438,6 +446,9 @@ double Settings::uniform_flow_y = 0;
 double Settings::uniform_flow_max_y_val = uniform_flow_x / 12;
 double Settings::uniform_flow_change_step = uniform_flow_max_y_val / 20;
 
+double Settings::streamline_step_size = 5;
+
+
 //Loads settings from configuration file
 void Settings::initialize(std::string file_path)
 {
@@ -446,14 +457,14 @@ void Settings::initialize(std::string file_path)
     Settings::font.loadFromFile("../src/Oswald-VariableFont_wght.ttf"); //Load text font
     Settings::graphic_settings.antialiasingLevel = 8; //Antialiasing "smoothes" edges
 
-    settings_reader.get_double(&Settings::frame_rate, "frame-rate");
+    settings_reader.get_double(&Settings::frame_rate, "frame_rate");
     settings_reader.get_int(&Settings::max_frame, "max_frame_number");
     settings_reader.get_int(&Settings::window_size_x, "window_size_x");
     settings_reader.get_int(&Settings::window_size_y, "window_size_y");
 
     settings_reader.get_double(&Settings::velocity_field_vector_scale, "velocity_field_vector_scale");
 
-    settings_reader.get_int(&Settings::use_body, "use-body");
+    settings_reader.get_int(&Settings::use_body, "use_body");
     settings_reader.get_int(&Settings::invert_solution, "invert_solution");
     settings_reader.get_string(Settings::body_file_path, "body_file_path");
     settings_reader.get_int(&Settings::body_points_down_sample, "body_points_down_sample");
@@ -469,9 +480,26 @@ void Settings::initialize(std::string file_path)
     settings_reader.get_double(&Settings::uniform_flow_max_y_val, "uniform_flow_max_y_val");
     settings_reader.get_double(&Settings::uniform_flow_change_step, "uniform_flow_change_step");
 
+    settings_reader.get_double(&Settings::streamline_step_size, "streamline_step_size");
+
     settings_reader.close_file();
 }
 
+
+//Returns coordinates of an ellipse
+vec2d Functions::ellipse_coord(double phi)
+{
+    double x_axis, y_axis;
+    vec2d coord;
+
+    x_axis = 2;
+    y_axis = 1;
+
+    coord.x = x_axis * cos(phi);
+    coord.y = y_axis * sin(phi);
+
+    return coord;
+}
 
 
 //Debugging tools/variables

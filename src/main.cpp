@@ -22,6 +22,8 @@
 //Implement algorithm that integrates influence of arbitrary panel distribution on other panels --> setup LSE such that total flow through body is minimized (not only controll poitns)
 //SIMD operations, Loop unrolling
 //Estimate source distribution based on panel angle, length and free flow --> accelerate convergence
+//Load body from function description
+//Gather draw / display / print function in class container
 
 int main()
 {   
@@ -43,8 +45,21 @@ int main()
     if(Settings::use_body)
     {
         Input_Reader body_reader(Settings::body_file_path);
-        body_reader.load_body(); //Load body contour from point-file
+        body_reader.load_body_from_memory(); //Load body contour from point-file
+        
+        /*
+        std::vector<double> param;
+        double steps = 200;
+        for(unsigned int u = 0; u < steps; ++u)
+        {   
+            param.push_back(u * (2 * M_PI / steps));
+        }
+        vec2d (*funct_ptr)(double){ &Functions::ellipse_coord };
+        body_reader.load_body_from_function(param, funct_ptr);
+        */
+
         //Body::Body_List[0]->interpolate_vertices(); //WIP
+        
         Body::Body_List[0]->set_offset(Settings::body_offset_x, Settings::body_offset_y); //Center Body in Window    
         Body::Body_List[0]->set_scale(Settings::body_scale_x, Settings::body_scale_y); //Scale Body
         Body::Body_List[0]->setup_source_panel(); //Setup LSE for source panel method
@@ -82,12 +97,30 @@ int main()
 
         for(unsigned int u = 0; u < 15; ++u) //Calculates and draws stream lines
         {
-            Physics::draw_streamline(window, Physics::integrate_streamline(100, 50 + u*28.5714, 700, 5));
+            Physics::draw_streamline(window, Physics::integrate_streamline(100, 50 + u*28.5714, 700, Settings::streamline_step_size));
         }
 
-        //Print angle of attack to screen
-        Mapping::draw_angle_of_attack(window, 100, 30);
+        //Print to GUI:
+        double num;
+        char num_char[15];
+        std::string text_str;
 
+        //Print angle of attack to screen (deg):
+        num = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle() * (180/(M_PI));
+        sprintf(num_char, "%6.2f", num);
+        text_str = num_char;
+        text_str = "AOF: " + text_str + " deg";
+        Mapping::print_to_screen(window, text_str, 100, 20);
+
+        //Mapping::draw_angle_of_attack(window, 100, 20);
+
+        //Print net panel source strength
+        sprintf(num_char, "%6.4f", Body::Body_List[0]->net_source_strength);
+        text_str = num_char;
+        text_str = "Net-Panel-Source: " + text_str;
+        Mapping::print_to_screen(window, text_str, 200, 20);
+
+        //Change uniform inflow every frame
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow
 
         Source::remove_sources(1); //Remove panel-sources for next frame recomputation

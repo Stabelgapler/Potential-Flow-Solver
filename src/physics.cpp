@@ -515,15 +515,15 @@ void Body::calc_source_panel()
     this->SOL = Matrix::solve_LSE_GS(this->LSE, RHS, &this->SOL, 1.8);
 
     //Distribute sources and calculate net source strength
-    double net_source = 0;
+    this->net_source_strength = 0;
 
     for(unsigned int u = 0; u < this->SOL.rows; ++u)
     {   
-        net_source += this->SOL.get_elem(u+1,1) * this->panel_lengths[u];
+        this->net_source_strength += this->SOL.get_elem(u+1,1) * this->panel_lengths[u];
         Point* temp = new Point(this->panel_mid_points[u].x + this->offset_x, -this->panel_mid_points[u].y + this->offset_y, this->SOL.get_elem(u+1,1));
     }
 
-    std::cout << "Net-Panel-Source-Strength: " << net_source << "\n";
+    //std::cout << "Net-Panel-Source-Strength: " << this->net_source_strength << "\n";
 
     return;
 }

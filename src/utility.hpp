@@ -5,8 +5,10 @@
 #include <iostream>
 #include <fstream>
 
+#include "linalg.hpp"
 #include <SFML\Graphics.hpp>
 
+//Can load data from a file to variables / settings, can interpret lines from a file to commands, can load bodies from a point file
 class Input_Reader
 {
     protected:
@@ -19,7 +21,8 @@ class Input_Reader
     void get_Input();
     void interpret_line(const std::string line);
 
-    void load_body();
+    void load_body_from_memory();
+    void load_body_from_function(std::vector<double>& param, vec2d (*function_ptr)(double));
 
     void get_string(std::string& str_ref, std::string key_str);
     void get_double(double* double_ref, std::string key_str);
@@ -35,10 +38,13 @@ class Mapping
     public:
     static double linear(double from_low, double from_high, double to_low, double to_high, double value);
     static double linear_bound(double from_low, double from_high, double to_low, double to_high, double value);
+    
     static sf::Color colormap_rgb(const double v_min, const double v_max, const double value, const double alpha = 255);
     static double gamma_corr(double value, double gamma);
+    
     static void draw_colorbar(sf::RenderWindow& window, double x_pos, double y_pos, double height, double width, double steps, double min_val, double max_val, double gamma, double disp_min, double disp_max);
-    static void draw_angle_of_attack(sf::RenderWindow& window, double x_pos, double y_pos, unsigned int size = 15);
+    static void print_to_screen(sf::RenderWindow& window, std::string text_str, double x_pos, double y_pos, unsigned int size = 15);
+
     static double coord_to_pxl();
 };
 
@@ -71,8 +77,16 @@ class Settings
     static double uniform_flow_max_y_val;
     static double uniform_flow_change_step;
 
+    static double streamline_step_size;
+
 
     static void initialize(std::string file_path);
+};
+
+class Functions
+{   
+    public:
+    static vec2d ellipse_coord(double phi);
 };
 
 class Debug
