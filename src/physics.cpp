@@ -71,8 +71,8 @@ double Uniform::calc_angle()
 
 void Uniform::calc_velocity(double pos[])
 {
-    PreAllocated::velocity.x = this->x_vel;
-    PreAllocated::velocity.y = this->y_vel;
+    PreAllocated::calc_velocity.x = this->x_vel;
+    PreAllocated::calc_velocity.y = this->y_vel;
 }
 
 void Uniform::superpose_velocity(Vector_Field& field)
@@ -116,8 +116,8 @@ void Point::calc_velocity(double pos[])
     x_dist = pos[0] - this->x_pos;
     y_dist = pos[1] - this->y_pos;
 
-    PreAllocated::velocity.x = this->intensity * x_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
-    PreAllocated::velocity.y = -this->intensity * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.x = this->intensity * x_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.y = -this->intensity * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
 }
 
 void Point::superpose_velocity(Vector_Field& field)
@@ -132,8 +132,8 @@ void Point::superpose_velocity(Vector_Field& field)
             
             calc_velocity(&pos[0]);
 
-            field.add_entry(u,v,1,PreAllocated::velocity.x);
-            field.add_entry(u,v,2,PreAllocated::velocity.y);
+            field.add_entry(u,v,1,PreAllocated::calc_velocity.x);
+            field.add_entry(u,v,2,PreAllocated::calc_velocity.y);
         }
     }
 
@@ -158,8 +158,8 @@ void Vortex::calc_velocity(double pos[])
     x_dist = pos[0] - this->x_pos;
     y_dist = pos[1] - this->y_pos;
 
-    PreAllocated::velocity.x = -this->intensity * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
-    PreAllocated::velocity.y = -this->intensity * x_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.x = -this->intensity * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.y = -this->intensity * x_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist));
 }
 
 void Vortex::superpose_velocity(Vector_Field& field)
@@ -174,8 +174,8 @@ void Vortex::superpose_velocity(Vector_Field& field)
 
             calc_velocity(&pos[0]);
 
-            field.add_entry(u,v,1,PreAllocated::velocity.x);
-            field.add_entry(u,v,2,PreAllocated::velocity.y);
+            field.add_entry(u,v,1,PreAllocated::calc_velocity.x);
+            field.add_entry(u,v,2,PreAllocated::calc_velocity.y);
         }
     }
 
@@ -200,8 +200,8 @@ void Doublet::calc_velocity(double pos[])
     x_dist = pos[0] - this->x_pos;
     y_dist = pos[1] - this->y_pos;
 
-    PreAllocated::velocity.x = this->intensity * (y_dist * y_dist - x_dist * x_dist) / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist) * (x_dist * x_dist + y_dist * y_dist));
-    PreAllocated::velocity.y = 2 * this->intensity * x_dist * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist) * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.x = this->intensity * (y_dist * y_dist - x_dist * x_dist) / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist) * (x_dist * x_dist + y_dist * y_dist));
+    PreAllocated::calc_velocity.y = 2 * this->intensity * x_dist * y_dist / (2 * M_PI * (x_dist * x_dist + y_dist * y_dist) * (x_dist * x_dist + y_dist * y_dist));
 }
 
 void Doublet::superpose_velocity(Vector_Field& field)
@@ -216,8 +216,8 @@ void Doublet::superpose_velocity(Vector_Field& field)
             
             calc_velocity(&pos[0]);
 
-            field.add_entry(u,v,1,PreAllocated::velocity.x);
-            field.add_entry(u,v,2,PreAllocated::velocity.y);
+            field.add_entry(u,v,1,PreAllocated::calc_velocity.x);
+            field.add_entry(u,v,2,PreAllocated::calc_velocity.y);
         }
     }
 
@@ -225,22 +225,19 @@ void Doublet::superpose_velocity(Vector_Field& field)
 }
 
 
-double* Physics::get_velocity(double x_pos, double y_pos)
+void Physics::get_velocity(double x_pos, double y_pos)
 {
-    double* vel = new double[2];
-    vel[0] = 0;
-    vel[1] = 0;
+    PreAllocated::get_velocity.x = 0;
+    PreAllocated::get_velocity.y = 0;
 
     double pos[2] = {x_pos, y_pos};
 
     for(unsigned int u=0; u < Source::Source_List.size(); ++u)
     {
         Source::Source_List[u]->calc_velocity(pos);
-        vel[0] += PreAllocated::velocity.x;
-        vel[1] += PreAllocated::velocity.y;
+        PreAllocated::get_velocity.x += PreAllocated::calc_velocity.x;
+        PreAllocated::get_velocity.y += PreAllocated::calc_velocity.y;
     }
-
-    return vel;
 }
 
 std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start, double x_end, double step)
@@ -262,24 +259,22 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
 
     while(pos.x < x_end && pos.x >= x_start && its < max_its)
     {
-        double* vel = Physics::get_velocity(pos.x, pos.y);
+        Physics::get_velocity(pos.x, pos.y);
 
-        vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
+        vel_mag = PreAllocated::get_velocity.magnitude();
         scale = step / vel_mag;
 
         if(vel_mag <= eps) //Stagnation point
         {
-            delete [] vel;
             return pos_vec;
         }
 
-        pos.x += scale * vel[0];
-        pos.y -= scale * vel[1];
+        pos.x += scale * PreAllocated::get_velocity.x;
+        pos.y -= scale * PreAllocated::get_velocity.y;
 
         pos_vec.push_back(pos);
 
         ++its;
-        delete [] vel;
     }
 
     return pos_vec;
@@ -328,14 +323,12 @@ void Physics::calc_pressure_field(Scalar_Field& pfield, double rho)
         {   
             std::vector<double> pos = pfield.get_entry_pos(u,v);
 
-            double* v_ptr = Physics::get_velocity(pos[0], pos[1]);
-            v_mag = v_ptr[0] * v_ptr[0] + v_ptr[1] * v_ptr[1];
+            Physics::get_velocity(pos[0], pos[1]);
+            v_mag = PreAllocated::get_velocity.magnitude_sqrd();
             
             p = 0.5 * rho * (v_inf - v_mag);
 
             pfield.set_entry(u,v,p);
-
-            delete [] v_ptr;
         }
     } 
 

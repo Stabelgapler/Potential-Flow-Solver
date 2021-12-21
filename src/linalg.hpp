@@ -35,6 +35,11 @@ struct vec2d
         return sqrt(this->x * this->x + this->y * this->y);
     }
 
+    double magnitude_sqrd() const
+    {
+        return (this->x * this->x + this->y * this->y);
+    }
+
     double angle() const
     {
         return atan2(this->y, this->x);

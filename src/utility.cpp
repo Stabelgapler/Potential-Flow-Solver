@@ -502,7 +502,8 @@ vec2d Functions::ellipse_coord(double phi)
 }
 
 //Pre allocated memory:
-vec2d PreAllocated::velocity;
+vec2d PreAllocated::calc_velocity;
+vec2d PreAllocated::get_velocity;
 
 //Debugging tools/variables
 unsigned int Debug::ctr = 0;
