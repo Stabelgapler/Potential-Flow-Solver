@@ -11,10 +11,11 @@ class Source
     public:
     static std::vector<Source *> Source_List;
 
-    double x_pos, y_pos, intensity;
+    vec2d position;
+    double intensity;
 
-    virtual void calc_velocity(double pos[]) = 0;
-    virtual void superpose_velocity(Vector_Field& field) = 0;
+    virtual void calc_velocity(const vec2d& coord) const = 0;
+    virtual void superpose_velocity(Vector_Field& field) const;
 
     static void remove_sources(unsigned int ind_1, unsigned int ind_2 = 0);
 
@@ -30,8 +31,8 @@ class Uniform: public Source
 
     double calc_angle();
 
-    void calc_velocity(double pos[]);
-    void superpose_velocity(Vector_Field& field);
+    void calc_velocity(const vec2d& coord) const;
+    void superpose_velocity(Vector_Field& field) const;
 
     void change_flow();
 };
@@ -41,8 +42,7 @@ class Point: public Source
     public:
     Point(double nx_pos, double ny_pos, double nintensity);
 
-    void calc_velocity(double pos[]);
-    void superpose_velocity(Vector_Field& field);
+    void calc_velocity(const vec2d& coord) const;
 };
 
 class Vortex: public Source
@@ -50,8 +50,7 @@ class Vortex: public Source
     public:
     Vortex(double nx_pos, double ny_pos, double nintensity);
 
-    void calc_velocity(double pos[]);
-    void superpose_velocity(Vector_Field& field);
+    void calc_velocity(const vec2d& coord) const;
 };
 
 class Doublet: public Source
@@ -59,14 +58,13 @@ class Doublet: public Source
     public:
     Doublet(double nx_pos, double ny_pos, double nintensity);
 
-    void calc_velocity(double pos[]);
-    void superpose_velocity(Vector_Field& field);
+    void calc_velocity(const vec2d& coord) const;
 };
 
 class Physics
 {
     public:
-    static void get_velocity(double x_pos, double y_pos);
+    static void get_velocity(const vec2d& coord);
 
     static std::vector<vec2d> integrate_streamline(double x_start, double y_start, double x_end, double step);
     static void draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_vec);

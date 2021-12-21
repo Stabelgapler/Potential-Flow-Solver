@@ -12,7 +12,6 @@
 #include "physics.hpp"
 
 //ToDo
-//Avoid dynamic memory allocation: safe for individual functions preallocated memory
 //replace gamma correction
 //window coordinate transform
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle

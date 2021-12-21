@@ -190,7 +190,7 @@ class Vector_Field
     double get_magnitude(unsigned int x_num, unsigned int y_num);
     double get_angle(unsigned int x_num, unsigned int y_num);
 
-    std::vector<double> get_entry_pos(unsigned int num_x, unsigned int num_y);
+    vec2d get_entry_pos(unsigned int num_x, unsigned int num_y) const;
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
 };
@@ -215,7 +215,7 @@ class Scalar_Field
     double get_min() const;
     double get_max() const;
 
-    std::vector<double> get_entry_pos(unsigned int num_x, unsigned int num_y);
+    vec2d get_entry_pos(unsigned int num_x, unsigned int num_y) const;
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
     void draw_field_2(sf::RenderWindow& window, double gamma);

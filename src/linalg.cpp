@@ -569,16 +569,14 @@ double Vector_Field::get_angle(unsigned int x_num, unsigned int y_num)
     return atan2(-y_comp, x_comp) * 180 / M_PI;
 }
 
-std::vector<double> Vector_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y)
+vec2d Vector_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y) const
 {   
-    std::vector<double> pos;
-    double pos_x = (((nnum_x-1) / (double)(this->num_x-1)) * this->size_x) - (this->size_x / 2.0) + this->offset_x;
-    double pos_y = (((nnum_y-1) / (double)(this->num_y-1)) * this->size_y) - (this->size_y / 2.0) + this->offset_y;
+    vec2d position;
 
-    pos.push_back(pos_x);
-    pos.push_back(pos_y);
+    position.x = (((nnum_x-1) / (double)(this->num_x-1)) * this->size_x) - (this->size_x / 2.0) + this->offset_x;
+    position.y = (((nnum_y-1) / (double)(this->num_y-1)) * this->size_y) - (this->size_y / 2.0) + this->offset_y;
 
-    return pos;
+    return position;
 }
 
 void Vector_Field::draw_field(sf::RenderWindow& window, double scale, double gamma) 
@@ -592,18 +590,20 @@ void Vector_Field::draw_field(sf::RenderWindow& window, double scale, double gam
     sf::RectangleShape temp_l(sf::Vector2f(scale, line_width));
     temp_l.setOrigin(0, line_width/2);
     temp_l.setFillColor(sf::Color::White);
+
+    vec2d pos;
     
     for(unsigned int u = 1; u <= this->num_x; ++u)
     {   
         for(unsigned int v = 1; v <= this->num_y; ++v)
         {   
-            std::vector<double> pos = get_entry_pos(u,v);
+            pos = get_entry_pos(u,v);
             
             temp_l.setSize(sf::Vector2f(scale * pow(this->get_magnitude(u,v), gamma), line_width));
             temp_l.setRotation(this->get_angle(u,v));
 
-            temp_c.setPosition(pos[0], pos[1]);
-            temp_l.setPosition(pos[0], pos[1]);
+            temp_c.setPosition(pos.x, pos.y);
+            temp_l.setPosition(pos.x, pos.y);
             
             
             window.draw(temp_l);
@@ -654,16 +654,13 @@ double Scalar_Field::get_max() const
     return this->field.get_max();
 }
 
-std::vector<double> Scalar_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y)
+vec2d Scalar_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y) const
 {   
-    std::vector<double> pos;
-    double pos_x = (((nnum_x-1) / (double)(this->num_x-1)) * this->size_x) - (this->size_x / 2.0) + this->offset_x;
-    double pos_y = (((nnum_y-1) / (double)(this->num_y-1)) * this->size_y) - (this->size_y / 2.0) + this->offset_y;
+    vec2d position;
+    position.x = (((nnum_x-1) / (double)(this->num_x-1)) * this->size_x) - (this->size_x / 2.0) + this->offset_x;
+    position.y = (((nnum_y-1) / (double)(this->num_y-1)) * this->size_y) - (this->size_y / 2.0) + this->offset_y;
 
-    pos.push_back(pos_x);
-    pos.push_back(pos_y);
-
-    return pos;
+    return position;
 }
 
 void Scalar_Field::draw_field(sf::RenderWindow& window, double scale, double gamma) 
@@ -671,6 +668,8 @@ void Scalar_Field::draw_field(sf::RenderWindow& window, double scale, double gam
     const double max_radius = 15;
     double value = 1.0;
     sf::CircleShape temp_c(value);
+
+    vec2d pos;
     
     for(unsigned int u = 1; u <= this->num_x; ++u)
     {   
@@ -689,11 +688,11 @@ void Scalar_Field::draw_field(sf::RenderWindow& window, double scale, double gam
 
             if(value > max_radius){continue;}
 
-            std::vector<double> pos = get_entry_pos(u,v);
+            pos = get_entry_pos(u,v);
             
             temp_c.setRadius(value);
             temp_c.setOrigin(value, value);
-            temp_c.setPosition(pos[0], pos[1]);
+            temp_c.setPosition(pos.x, pos.y);
             
             window.draw(temp_c);
         }
@@ -711,6 +710,7 @@ void Scalar_Field::draw_field_2(sf::RenderWindow& window, double gamma)
     cmax_val = Mapping::gamma_corr(max_val, gamma);
 
     double value = 1.0;
+    vec2d pos;
 
     double cell_width, cell_height;
     cell_width = this->size_x/(this->num_x - 1);
@@ -728,8 +728,8 @@ void Scalar_Field::draw_field_2(sf::RenderWindow& window, double gamma)
             
             temp_l.setFillColor(Mapping::colormap_rgb(min_val, max_val, value, 255));
 
-            std::vector<double> pos = get_entry_pos(u,v);
-            temp_l.setPosition(pos[0], pos[1]);
+            pos = get_entry_pos(u,v);
+            temp_l.setPosition(pos.x, pos.y);
             
             window.draw(temp_l);
         }
