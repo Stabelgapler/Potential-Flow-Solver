@@ -2,7 +2,7 @@
 #This file specifies the simulation settings
 
 #Window-Settings:
-frame_rate=25
+frame_rate=18
 #Set maximum number of frames to negative number for infinite loop
 max_frame_number=-1
 window_size_x=800

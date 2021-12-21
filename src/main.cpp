@@ -109,13 +109,13 @@ int main()
         sprintf(num_char, "%6.2f", num);
         text_str = num_char;
         text_str = "AOF: " + text_str + " deg";
-        Mapping::print_to_screen(window, text_str, 100, 20);
+        Mapping::print_to_screen(window, text_str, 100, 15);
 
         //Print net panel source strength
         sprintf(num_char, "%6.4f", Body::Body_List[0]->net_source_strength);
         text_str = num_char;
         text_str = "Net-Panel-Source: " + text_str;
-        Mapping::print_to_screen(window, text_str, 200, 20);
+        Mapping::print_to_screen(window, text_str, 200, 15);
 
         //Change uniform inflow every frame
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow

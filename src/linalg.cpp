@@ -402,7 +402,7 @@ Matrix Matrix::solve_LSE_Jacobi(const Matrix A, const Matrix b, Matrix* x0, doub
         }
     }
 
-    std::cout << "Solved LSE in " << count << " steps!" << std::endl;
+    std::cout << "Solved LSE in " << count << " steps." << std::endl;
     return x;
 }
 
@@ -455,7 +455,7 @@ Matrix Matrix::solve_LSE_GS(const Matrix A, const Matrix b, Matrix* x0, double o
         }
     }
 
-    std::cout << "Solved LSE in " << count << " steps!" << std::endl;
+    std::cout << "Solved LSE in " << count << " steps." << std::endl;
     return x;
 }
 
