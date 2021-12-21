@@ -14,6 +14,8 @@ class Source
     vec2d position;
     double intensity;
 
+    Source(double nx_pos, double ny_pos, double nintensity);
+
     virtual void calc_velocity(const vec2d& coord) const = 0;
     virtual void superpose_velocity(Vector_Field& field) const;
 

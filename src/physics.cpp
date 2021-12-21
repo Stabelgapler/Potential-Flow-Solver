@@ -10,6 +10,16 @@
 
 std::vector<Source *> Source::Source_List;
 
+Source::Source(double nx_pos, double ny_pos, double nintensity)
+{
+    Source::Source_List.push_back(this);
+
+    this->position.x = nx_pos;
+    this->position.y = ny_pos;
+
+    this->intensity = nintensity;
+}
+
 void Source::superpose_velocity(Vector_Field& field) const
 {   
     vec2d pos;
@@ -71,15 +81,8 @@ void Source::draw_sources(sf::RenderWindow& window)
 }
 
 
-Uniform::Uniform(double nx_vel, double ny_vel)
+Uniform::Uniform(double nx_vel, double ny_vel): Source(NAN, NAN, NAN)
 {
-    Source::Source_List.push_back(this);
-
-    this->position.x = NAN;
-    this->position.y = NAN;
-
-    this->intensity = NAN;
-
     this->x_vel = nx_vel;
     this->y_vel = ny_vel; 
 }
@@ -119,15 +122,7 @@ void Uniform::change_flow() //Changes Uniform flow y-velocity every frame
 }
 
 
-Point::Point(double nx_pos, double ny_pos, double nintensity)
-{
-    Source::Source_List.push_back(this);
-
-    this->position.x = nx_pos;
-    this->position.y = ny_pos;
-
-    this->intensity = nintensity;
-}
+Point::Point(double nx_pos, double ny_pos, double nintensity): Source(nx_pos, ny_pos, nintensity){}
 
 void Point::calc_velocity(const vec2d& coord) const
 {
@@ -140,15 +135,7 @@ void Point::calc_velocity(const vec2d& coord) const
 }
 
 
-Vortex::Vortex(double nx_pos, double ny_pos, double nintensity)
-{
-    Source::Source_List.push_back(this);
-
-    this->position.x = nx_pos;
-    this->position.y = ny_pos;
-
-    this->intensity = nintensity;
-}
+Vortex::Vortex(double nx_pos, double ny_pos, double nintensity): Source(nx_pos, ny_pos, nintensity){}
 
 void Vortex::calc_velocity(const vec2d& coord) const
 {
@@ -161,15 +148,7 @@ void Vortex::calc_velocity(const vec2d& coord) const
 }
 
 
-Doublet::Doublet(double nx_pos, double ny_pos, double nintensity)
-{
-    Source::Source_List.push_back(this);
-
-    this->position.x = nx_pos;
-    this->position.y = ny_pos;
-
-    this->intensity = nintensity;
-}
+Doublet::Doublet(double nx_pos, double ny_pos, double nintensity): Source(nx_pos, ny_pos, nintensity){}
 
 void Doublet::calc_velocity(const vec2d& coord) const
 {
