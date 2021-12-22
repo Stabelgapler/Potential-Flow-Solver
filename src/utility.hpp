@@ -45,7 +45,8 @@ class Mapping
     static void draw_colorbar(sf::RenderWindow& window, double x_pos, double y_pos, double height, double width, double steps, double min_val, double max_val, double gamma, double disp_min, double disp_max);
     static void print_to_screen(sf::RenderWindow& window, std::string text_str, double x_pos, double y_pos, unsigned int size = 15);
 
-    static double coord_to_pxl();
+    static vec2d coord_to_pxl(const vec2d& coord);
+    static vec2d pxl_to_coord(const vec2d& w_pxl);
 };
 
 class Settings
@@ -58,6 +59,21 @@ class Settings
     static int max_frame; //After this number of frames the program terminates
     static int window_size_x;
     static int window_size_y;
+
+    static int display_size_x;
+    static int display_size_y;
+    static double display_offset_x;
+    static double display_offset_y;
+
+    static double mtr_per_pxl_x;
+    static double mtr_per_pxl_y;
+    static double coord_offset_x;
+    static double coord_offset_y;
+
+    static int velocity_field_samples_x;
+    static int velocity_field_samples_y;
+    static int pressure_field_samples_x;
+    static int pressure_field_samples_y;
 
     static double velocity_field_vector_scale; //Scales Velocity vectors
     

@@ -13,10 +13,10 @@
 
 //ToDo
 //replace gamma correction
-//window coordinate transform
+//window coordinate transform --> scrolling
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
 //split vec2d implementation to header and source file
-//Body vertex interpolation fix
+//Body vertex interpolation fix, NAN occurs also for some panel geometries
 //Linear Algebra Revision --> efficient Matrix multiplication (compare to EIGEN library)
 //Implement algorithm that integrates influence of arbitrary panel distribution on other panels --> setup LSE such that total flow through body is minimized (not only controll poitns)
 //SIMD operations, Loop unrolling
@@ -28,14 +28,14 @@ int main()
 {   
     Settings::initialize("../settings.dat");
 
-    //Timing variables
+    //Timing variables for constant frame rate
     unsigned long int ms_start, ms_end;
     int ms_delay;
     const unsigned int ms_durr = round(1000.0 / Settings::frame_rate);
 
     //Initializes the pressure and velocity fields
-    Scalar_Field pressure_field(90,60,400,250,600,400); 
-    Vector_Field velocity_field(20,15,400,250,600,400);
+    Scalar_Field pressure_field(Settings::pressure_field_samples_x, Settings::pressure_field_samples_y,400,250,600,400); 
+    Vector_Field velocity_field(Settings::velocity_field_samples_x, Settings::velocity_field_samples_y,400,250,600,400);
     Uniform uniform(Settings::uniform_flow_x, Settings::uniform_flow_y);
 
     Input_Reader input_reader("../source_input.txt");
@@ -46,7 +46,7 @@ int main()
         Input_Reader body_reader(Settings::body_file_path);
         body_reader.load_body_from_memory(); //Load body contour from point-file
         
-        /*
+        /* Load Body from specified function
         std::vector<double> param;
         double steps = 200;
         for(unsigned int u = 0; u < steps; ++u)
@@ -124,7 +124,7 @@ int main()
 
         window.display();
 
-        { //Accounts partially for the delay of the program runtime
+        { //Delay between frames accounts partially for the delay of the program runtime
             using namespace std::chrono;
             ms_end = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
             ms_delay = ms_durr - (ms_end - ms_start);

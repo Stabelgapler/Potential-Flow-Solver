@@ -413,9 +413,38 @@ void Mapping::print_to_screen(sf::RenderWindow& window, std::string text_str, do
     window.draw(text);
 }
 
-double Mapping::coord_to_pxl()
-{
-    return 0;
+//Map coordinate [m] to window [pxl]
+vec2d Mapping::coord_to_pxl(const vec2d& coord)
+{   
+    vec2d d_pxl;
+    d_pxl.x = (coord.x + Settings::coord_offset_x) / Settings::mtr_per_pxl_x;
+    d_pxl.y = (coord.y + Settings::coord_offset_y) / (-1 * Settings::mtr_per_pxl_x);
+
+    vec2d d_off;
+    d_off.x = Settings::display_offset_x;
+    d_off.y = Settings::display_offset_y;
+
+    vec2d w_pxl;
+    w_pxl = d_pxl.add(d_off);
+
+    return w_pxl;
+}
+
+//Map window [pxl] to coordinate [m]
+vec2d Mapping::pxl_to_coord(const vec2d& w_pxl)
+{   
+    vec2d d_off;
+    d_off.x = Settings::display_offset_x;
+    d_off.y = Settings::display_offset_y;
+
+    vec2d d_pxl;
+    d_pxl = w_pxl.subtract(d_off);
+
+    vec2d coord;
+    coord.x = (d_pxl.x * Settings::mtr_per_pxl_x) - Settings::coord_offset_x;
+    coord.y = (d_pxl.y * -1 * Settings::mtr_per_pxl_y) - Settings::coord_offset_y; 
+
+    return coord;
 }
 
 
@@ -427,6 +456,21 @@ double Settings::frame_rate = 30;
 int Settings::max_frame = 80;
 int Settings::window_size_x = 800;
 int Settings::window_size_y = 500;
+
+int Settings::display_size_x = 600;
+int Settings::display_size_y = 500;
+double Settings::display_offset_x = 100;
+double Settings::display_offset_y = 50;
+
+double Settings::mtr_per_pxl_x = 1;
+double Settings::mtr_per_pxl_y = 1;
+double Settings::coord_offset_x = 0;
+double Settings::coord_offset_y = 0;
+
+int Settings::velocity_field_samples_x = 20;
+int Settings::velocity_field_samples_y = 15;
+int Settings::pressure_field_samples_x = 90;
+int Settings::pressure_field_samples_y = 60;
 
 double Settings::velocity_field_vector_scale = 10;
 
@@ -462,6 +506,21 @@ void Settings::initialize(std::string file_path)
     settings_reader.get_int(&Settings::window_size_x, "window_size_x");
     settings_reader.get_int(&Settings::window_size_y, "window_size_y");
 
+    settings_reader.get_int(&Settings::display_size_x, "display_size_x");
+    settings_reader.get_int(&Settings::display_size_y, "display_size_y");
+    Settings::display_offset_x = (Settings::window_size_x - Settings::display_size_x) / 2.0;
+    Settings::display_offset_y = (Settings::window_size_y - Settings::display_size_y) / 2.0;
+
+    Settings::mtr_per_pxl_x = 1;
+    Settings::mtr_per_pxl_y = 1;
+    Settings::coord_offset_x = 0;
+    Settings::coord_offset_y = 0;
+
+    settings_reader.get_int(&Settings::velocity_field_samples_x, "velocity_field_samples_x");
+    settings_reader.get_int(&Settings::velocity_field_samples_y, "velocity_field_samples_y");
+    settings_reader.get_int(&Settings::pressure_field_samples_x, "pressure_field_samples_x");
+    settings_reader.get_int(&Settings::pressure_field_samples_y, "pressure_field_samples_y");
+
     settings_reader.get_double(&Settings::velocity_field_vector_scale, "velocity_field_vector_scale");
 
     settings_reader.get_int(&Settings::use_body, "use_body");
@@ -492,7 +551,7 @@ vec2d Functions::ellipse_coord(double phi)
     double x_axis, y_axis;
     vec2d coord;
 
-    x_axis = 2;
+    x_axis = 3;
     y_axis = 1;
 
     coord.x = x_axis * cos(phi);
