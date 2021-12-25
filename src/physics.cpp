@@ -63,16 +63,16 @@ void Source::draw_sources(sf::RenderWindow& window)
     temp_c.setOrigin(circle_radius, circle_radius);
     temp_c.setFillColor(sf::Color::Magenta);
 
-    double x_pos, y_pos;
+    vec2d coord, w_pxl;
 
     for(unsigned int u=0; u < Source::Source_List.size(); ++u)
     {
-        x_pos = Source::Source_List[u]->position.x;
-        y_pos = Source::Source_List[u]->position.y;
+        coord = Source::Source_List[u]->position;
 
-        if(!isnan(x_pos) && !isnan(y_pos))
-        {
-            temp_c.setPosition(x_pos, y_pos);
+        if(!isnan(coord.x) && !isnan(coord.y))
+        {   
+            w_pxl = Mapping::coord_to_pxl(coord);
+            temp_c.setPosition(w_pxl.x, w_pxl.y);
             window.draw(temp_c);
         }
     }
@@ -131,7 +131,7 @@ void Point::calc_velocity(const vec2d& coord) const
     distance = coord.subtract(this->position);
 
     PreAllocated::calc_velocity.x = this->intensity * distance.x / (2 * M_PI * distance.magnitude_sqrd());
-    PreAllocated::calc_velocity.y = -this->intensity * distance.y / (2 * M_PI * distance.magnitude_sqrd());
+    PreAllocated::calc_velocity.y = this->intensity * distance.y / (2 * M_PI * distance.magnitude_sqrd());
 }
 
 
@@ -143,7 +143,7 @@ void Vortex::calc_velocity(const vec2d& coord) const
 
     distance = coord.subtract(this->position);
 
-    PreAllocated::calc_velocity.x = -this->intensity * distance.y / (2 * M_PI * distance.magnitude_sqrd());
+    PreAllocated::calc_velocity.x = this->intensity * distance.y / (2 * M_PI * distance.magnitude_sqrd());
     PreAllocated::calc_velocity.y = -this->intensity * distance.x / (2 * M_PI * distance.magnitude_sqrd());
 }
 
@@ -157,7 +157,7 @@ void Doublet::calc_velocity(const vec2d& coord) const
     distance = coord.subtract(this->position);
 
     PreAllocated::calc_velocity.x = this->intensity * (distance.y * distance.y - distance.x * distance.x) / (2 * M_PI * distance.magnitude_sqrd() * distance.magnitude_sqrd());
-    PreAllocated::calc_velocity.y = 2 * this->intensity * distance.x * distance.y / (2 * M_PI * distance.magnitude_sqrd() * distance.magnitude_sqrd());
+    PreAllocated::calc_velocity.y = -2 * this->intensity * distance.x * distance.y / (2 * M_PI * distance.magnitude_sqrd() * distance.magnitude_sqrd());
 }
 
 
@@ -174,7 +174,7 @@ void Physics::get_velocity(const vec2d& coord)
     }
 }
 
-std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start, double x_end, double step)
+std::vector<vec2d> Physics::integrate_streamline(double y_start, double step_length)
 {
     std::vector<vec2d> pos_vec;
 
@@ -184,6 +184,14 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
 
     const double eps = 1E-1;
     const unsigned long int max_its = 1E3;
+
+    //Temporary (ab)use pos vec2d
+    pos.y = 0; pos.x = Settings::display_offset_x;
+    const double x_start = Mapping::pxl_to_coord(pos).x;
+    pos.x = Settings::display_size_x + Settings::display_offset_x;
+    const double x_end = Mapping::pxl_to_coord(pos).x;
+    step_length = step_length * Settings::mtr_per_pxl_x;
+  
     unsigned long int its = 0;
 
     pos.x = x_start;
@@ -196,7 +204,7 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
         Physics::get_velocity(pos);
 
         vel_mag = PreAllocated::get_velocity.magnitude();
-        scale = step / vel_mag;
+        scale = step_length / vel_mag;
 
         if(vel_mag <= eps) //Stagnation point
         {
@@ -204,7 +212,7 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
         }
 
         pos.x += scale * PreAllocated::get_velocity.x;
-        pos.y -= scale * PreAllocated::get_velocity.y;
+        pos.y += scale * PreAllocated::get_velocity.y;
 
         pos_vec.push_back(pos);
 
@@ -217,6 +225,7 @@ std::vector<vec2d> Physics::integrate_streamline(double x_start, double y_start,
 void Physics::draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_vec)
 {
     double x_dist, y_dist, dist, angle;
+    vec2d w_pxl;
     
     double line_width = 1.5;
     sf::RectangleShape temp_l(sf::Vector2f(1, line_width));
@@ -225,15 +234,17 @@ void Physics::draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_v
     
     for(unsigned int u = 0; u < pos_vec.size()-1; ++u)
     {   
-        x_dist = pos_vec[u+1].x - pos_vec[u].x;
-        y_dist = pos_vec[u+1].y - pos_vec[u].y;
+        x_dist = (pos_vec[u+1].x - pos_vec[u].x) / Settings::mtr_per_pxl_x;
+        y_dist = (pos_vec[u+1].y - pos_vec[u].y) / Settings::mtr_per_pxl_y;
 
         dist = sqrt(x_dist * x_dist + y_dist * y_dist);
-        angle = atan2(y_dist, x_dist) * 180 / M_PI;
+        angle = atan2(-y_dist, x_dist) * 180 / M_PI;
+        
+        w_pxl = Mapping::coord_to_pxl(pos_vec[u]);
 
         temp_l.setSize(sf::Vector2f(dist, line_width));
         temp_l.setRotation(angle);
-        temp_l.setPosition(pos_vec[u].x, pos_vec[u].y);
+        temp_l.setPosition(w_pxl.x, w_pxl.y);
         
         window.draw(temp_l);
     }
@@ -517,10 +528,17 @@ void Body::draw_body(sf::RenderWindow& window)
     polygon.setPointCount(this->vertices.size());
     polygon.setOutlineColor(sf::Color::Black);
     polygon.setOutlineThickness(1);
+
+    vec2d coord, w_pxl;
     
     for(unsigned int u = 0; u < this->vertices.size(); ++u)
     {   
-        polygon.setPoint(u, sf::Vector2f(this->vertices[u].x * this->scale_x + this->offset_x, this->vertices[u].y * -this->scale_y + this->offset_y));
+        coord.x = this->vertices[u].x * this->scale_x + this->offset_x;
+        coord.y = this->vertices[u].y * this->scale_y + this->offset_y;
+
+        w_pxl = Mapping::coord_to_pxl(coord);
+
+        polygon.setPoint(u, sf::Vector2f(w_pxl.x, w_pxl.y));
     }
     window.draw(polygon);
 }

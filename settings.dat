@@ -20,15 +20,17 @@ pressure_field_samples_y=60
 
 #Length of velocity indicators:
 velocity_field_vector_scale=15
+#Two options for pressure visualization, eiter 0 or 1
+pressure_display_style=1
 
 #Body-Settings:
 use_body=1
 #If the panels are ordered in a clockwise fashion, then invert_solution = 0!
 invert_solution=1
-body_file_path=../body_files/NACA_0012_wake.txt
+body_file_path=../body_files/NACA_0012.txt
 body_points_down_sample=2
-body_offset_x=275
-body_offset_y=250
+body_offset_x=-125
+body_offset_y=0
 body_scale_x=250
 body_scale_y=250
 
@@ -42,3 +44,4 @@ uniform_flow_change_step=0.002
 
 #Streamlines:
 streamline_step_size=7.5;
+number_streamlines=15;

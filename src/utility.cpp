@@ -11,6 +11,7 @@
 #include "linalg.hpp"
 #include "physics.hpp"
 #include <SFML\Graphics.hpp>
+#include <SFML\Window.hpp>
 
 
 Input_Reader::Input_Reader(const std::string input_file_path_n): input_file_path(input_file_path_n), input_file(std::ifstream(input_file_path_n))
@@ -417,8 +418,8 @@ void Mapping::print_to_screen(sf::RenderWindow& window, std::string text_str, do
 vec2d Mapping::coord_to_pxl(const vec2d& coord)
 {   
     vec2d d_pxl;
-    d_pxl.x = (coord.x + Settings::coord_offset_x) / Settings::mtr_per_pxl_x;
-    d_pxl.y = (coord.y + Settings::coord_offset_y) / (-1 * Settings::mtr_per_pxl_x);
+    d_pxl.x = ((coord.x + Settings::coord_offset_x) / Settings::mtr_per_pxl_x) + (Settings::display_size_x / 2.0);
+    d_pxl.y = ((coord.y + Settings::coord_offset_y) / (-1 * Settings::mtr_per_pxl_x)) + (Settings::display_size_y / 2.0);
 
     vec2d d_off;
     d_off.x = Settings::display_offset_x;
@@ -441,8 +442,8 @@ vec2d Mapping::pxl_to_coord(const vec2d& w_pxl)
     d_pxl = w_pxl.subtract(d_off);
 
     vec2d coord;
-    coord.x = (d_pxl.x * Settings::mtr_per_pxl_x) - Settings::coord_offset_x;
-    coord.y = (d_pxl.y * -1 * Settings::mtr_per_pxl_y) - Settings::coord_offset_y; 
+    coord.x = ((d_pxl.x - (Settings::display_size_x / 2.0)) * Settings::mtr_per_pxl_x) - Settings::coord_offset_x;
+    coord.y = ((d_pxl.y - (Settings::display_size_y / 2.0)) * -1 * Settings::mtr_per_pxl_y) - Settings::coord_offset_y; 
 
     return coord;
 }
@@ -473,6 +474,7 @@ int Settings::pressure_field_samples_x = 90;
 int Settings::pressure_field_samples_y = 60;
 
 double Settings::velocity_field_vector_scale = 10;
+int Settings::pressure_display_style = 1;
 
 int Settings::use_body = 0;
 int Settings::invert_solution = 0;
@@ -491,6 +493,7 @@ double Settings::uniform_flow_max_y_val = uniform_flow_x / 12;
 double Settings::uniform_flow_change_step = uniform_flow_max_y_val / 20;
 
 double Settings::streamline_step_size = 5;
+int Settings::number_streamlines = 15;
 
 
 //Loads settings from configuration file
@@ -522,6 +525,7 @@ void Settings::initialize(std::string file_path)
     settings_reader.get_int(&Settings::pressure_field_samples_y, "pressure_field_samples_y");
 
     settings_reader.get_double(&Settings::velocity_field_vector_scale, "velocity_field_vector_scale");
+    settings_reader.get_int(&Settings::pressure_display_style, "pressure_display_style");
 
     settings_reader.get_int(&Settings::use_body, "use_body");
     settings_reader.get_int(&Settings::invert_solution, "invert_solution");
@@ -540,6 +544,7 @@ void Settings::initialize(std::string file_path)
     settings_reader.get_double(&Settings::uniform_flow_change_step, "uniform_flow_change_step");
 
     settings_reader.get_double(&Settings::streamline_step_size, "streamline_step_size");
+    settings_reader.get_int(&Settings::number_streamlines, "number_streamlines");
 
     settings_reader.close_file();
 }
@@ -559,6 +564,41 @@ vec2d Functions::ellipse_coord(double phi)
 
     return coord;
 }
+
+
+void UserIO::update_zoom(const double& delta)
+{   
+    Settings::mtr_per_pxl_x = Settings::mtr_per_pxl_y += 0.1 * Settings::mtr_per_pxl_x * delta; 
+}
+
+void UserIO::print_GUI(sf::RenderWindow& window)
+{
+    //Print to GUI:
+    double num;
+    char num_char[15];
+    std::string text_str;
+
+    //Print angle of attack to screen (deg):
+    num = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle() * (180/(M_PI));
+    sprintf(num_char, "%6.2f", num);
+    text_str = "AOF: " + std::string(num_char) + " deg";
+    Mapping::print_to_screen(window, text_str, 100, 15);
+    
+    //Print net panel source strength
+    sprintf(num_char, "%6.4f", Body::Body_List[0]->net_source_strength);
+    text_str = "Net-Panel-Source: " + std::string(num_char);
+    Mapping::print_to_screen(window, text_str, 200, 15);
+    
+    //Print Cursor Coordinates
+    sf::Vector2i w_pxl = sf::Mouse::getPosition(window);
+    vec2d coord = Mapping::pxl_to_coord(vec2d(w_pxl.x, w_pxl.y));
+    sprintf(num_char, "%6.3f", coord.x);
+    text_str = "(" + std::string(num_char);
+    sprintf(num_char, "%6.3f", coord.y);
+    text_str = text_str + "; " + num_char + ")";
+    Mapping::print_to_screen(window, text_str, 100, 465);
+}
+
 
 //Pre allocated memory:
 vec2d PreAllocated::calc_velocity;

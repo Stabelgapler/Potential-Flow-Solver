@@ -45,6 +45,18 @@ struct vec2d
         return atan2(this->y, this->x);
     }
 
+    vec2d(const double& nx, const double& ny)
+    {
+        this->x = nx;
+        this->y = ny;
+    }
+
+    vec2d()
+    {
+        this->x = 0;
+        this->y = 0;
+    }
+
     vec2d& operator+(const vec2d& rhs)
     {
         this->x += rhs.x;
@@ -190,6 +202,8 @@ class Vector_Field
     double get_magnitude(unsigned int x_num, unsigned int y_num);
     double get_angle(unsigned int x_num, unsigned int y_num);
 
+    void update_position(const vec2d& size, const vec2d& offset);
+
     vec2d get_entry_pos(unsigned int num_x, unsigned int num_y) const;
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
@@ -203,6 +217,7 @@ class Scalar_Field
     public:
     static std::vector<Scalar_Field *> Scalar_Field_List;
 
+    //Koordinaten, keine Pixel
     double offset_x, offset_y, size_x, size_y, num_x, num_y;
 
     Scalar_Field(unsigned int nnum_x, unsigned int nnum_y, double noffset_x, double noffset_y, double nsize_x, double nsize_y);
@@ -216,6 +231,8 @@ class Scalar_Field
     double get_max() const;
 
     vec2d get_entry_pos(unsigned int num_x, unsigned int num_y) const;
+
+    void update_position(const vec2d& size, const vec2d& offset);
 
     void draw_field(sf::RenderWindow& window, double scale, double gamma);
     void draw_field_2(sf::RenderWindow& window, double gamma);

@@ -76,6 +76,7 @@ class Settings
     static int pressure_field_samples_y;
 
     static double velocity_field_vector_scale; //Scales Velocity vectors
+    static int pressure_display_style; //0 or 1
     
     static int use_body;
     static int invert_solution;
@@ -94,6 +95,7 @@ class Settings
     static double uniform_flow_change_step;
 
     static double streamline_step_size;
+    static int number_streamlines;
 
 
     static void initialize(std::string file_path);
@@ -103,6 +105,14 @@ class Functions
 {   
     public:
     static vec2d ellipse_coord(double phi);
+};
+
+class UserIO
+{   
+    public:
+    static void update_zoom(const double& delta);
+
+    static void print_GUI(sf::RenderWindow& window);
 };
 
 //Pre allocated memory to save time for reusing allocated memory

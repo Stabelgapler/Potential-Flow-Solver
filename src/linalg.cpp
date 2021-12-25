@@ -579,6 +579,15 @@ vec2d Vector_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y) cons
     return position;
 }
 
+void Vector_Field::update_position(const vec2d& size, const vec2d& offset)
+{
+    this->size_x = size.x;
+    this->size_y = size.y;
+
+    this->offset_x = offset.x;
+    this->offset_y = offset.y;
+}
+
 void Vector_Field::draw_field(sf::RenderWindow& window, double scale, double gamma) 
 {   
     double circle_radius = 1.5;
@@ -591,19 +600,20 @@ void Vector_Field::draw_field(sf::RenderWindow& window, double scale, double gam
     temp_l.setOrigin(0, line_width/2);
     temp_l.setFillColor(sf::Color::White);
 
-    vec2d pos;
+    vec2d coord, w_pxl;
     
     for(unsigned int u = 1; u <= this->num_x; ++u)
     {   
         for(unsigned int v = 1; v <= this->num_y; ++v)
         {   
-            pos = get_entry_pos(u,v);
+            coord = get_entry_pos(u,v);
+            w_pxl = Mapping::coord_to_pxl(coord);
             
             temp_l.setSize(sf::Vector2f(scale * pow(this->get_magnitude(u,v), gamma), line_width));
             temp_l.setRotation(this->get_angle(u,v));
 
-            temp_c.setPosition(pos.x, pos.y);
-            temp_l.setPosition(pos.x, pos.y);
+            temp_c.setPosition(w_pxl.x, w_pxl.y);
+            temp_l.setPosition(w_pxl.x, w_pxl.y);
             
             
             window.draw(temp_l);
@@ -663,13 +673,22 @@ vec2d Scalar_Field::get_entry_pos(unsigned int nnum_x, unsigned int nnum_y) cons
     return position;
 }
 
+void Scalar_Field::update_position(const vec2d& size, const vec2d& offset)
+{
+    this->size_x = size.x;
+    this->size_y = size.y;
+
+    this->offset_x = offset.x;
+    this->offset_y = offset.y;
+}
+
 void Scalar_Field::draw_field(sf::RenderWindow& window, double scale, double gamma) 
 {   
     const double max_radius = 15;
     double value = 1.0;
     sf::CircleShape temp_c(value);
 
-    vec2d pos;
+    vec2d coord, w_pxl;
     
     for(unsigned int u = 1; u <= this->num_x; ++u)
     {   
@@ -688,11 +707,12 @@ void Scalar_Field::draw_field(sf::RenderWindow& window, double scale, double gam
 
             if(value > max_radius){continue;}
 
-            pos = get_entry_pos(u,v);
+            coord = get_entry_pos(u,v);
+            w_pxl = Mapping::coord_to_pxl(coord);
             
             temp_c.setRadius(value);
             temp_c.setOrigin(value, value);
-            temp_c.setPosition(pos.x, pos.y);
+            temp_c.setPosition(w_pxl.x, w_pxl.y);
             
             window.draw(temp_c);
         }
@@ -710,11 +730,11 @@ void Scalar_Field::draw_field_2(sf::RenderWindow& window, double gamma)
     cmax_val = Mapping::gamma_corr(max_val, gamma);
 
     double value = 1.0;
-    vec2d pos;
+    vec2d coord, w_pxl;
 
     double cell_width, cell_height;
-    cell_width = this->size_x/(this->num_x - 1);
-    cell_height = this->size_y/(this->num_y - 1);
+    cell_width = (this->size_x/(this->num_x - 1)) / Settings::mtr_per_pxl_x;
+    cell_height = (this->size_y/(this->num_y - 1)) / Settings::mtr_per_pxl_y;
 
     sf::RectangleShape temp_l(sf::Vector2f(cell_width, cell_height));
     temp_l.setOrigin(cell_width/2, cell_height/2);
@@ -728,8 +748,9 @@ void Scalar_Field::draw_field_2(sf::RenderWindow& window, double gamma)
             
             temp_l.setFillColor(Mapping::colormap_rgb(min_val, max_val, value, 255));
 
-            pos = get_entry_pos(u,v);
-            temp_l.setPosition(pos.x, pos.y);
+            coord = get_entry_pos(u,v);
+            w_pxl = Mapping::coord_to_pxl(coord);
+            temp_l.setPosition(w_pxl.x, w_pxl.y);
             
             window.draw(temp_l);
         }

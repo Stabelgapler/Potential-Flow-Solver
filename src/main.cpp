@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <SFML\Graphics.hpp>
+#include <SFML\Window.hpp>
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -13,7 +14,7 @@
 
 //ToDo
 //replace gamma correction
-//window coordinate transform --> scrolling
+//window coordinate transform --> scrolling, integrate streamline/draw streamline (-y_dist)angle?
 //vector2d insertion --> streamlines, panel method, velocity cacluclation --> add vertex operators +,-,*,/ and magnitude, angle
 //split vec2d implementation to header and source file
 //Body vertex interpolation fix, NAN occurs also for some panel geometries
@@ -22,20 +23,21 @@
 //SIMD operations, Loop unrolling
 //Estimate source distribution based on panel angle, length and free flow --> accelerate convergence
 //Load body from function description
-//Gather draw / display / print function in class container
+//Gather draw / display / print function in class container UserIO
+//draw field 1 colorbar
 
 int main()
 {   
     Settings::initialize("../settings.dat");
-
+    
     //Timing variables for constant frame rate
     unsigned long int ms_start, ms_end;
     int ms_delay;
     const unsigned int ms_durr = round(1000.0 / Settings::frame_rate);
 
     //Initializes the pressure and velocity fields
-    Scalar_Field pressure_field(Settings::pressure_field_samples_x, Settings::pressure_field_samples_y,400,250,600,400); 
-    Vector_Field velocity_field(Settings::velocity_field_samples_x, Settings::velocity_field_samples_y,400,250,600,400);
+    Scalar_Field pressure_field(Settings::pressure_field_samples_x, Settings::pressure_field_samples_y,0,0,600,400); 
+    Vector_Field velocity_field(Settings::velocity_field_samples_x, Settings::velocity_field_samples_y,0,0,600,400);
     Uniform uniform(Settings::uniform_flow_x, Settings::uniform_flow_y);
 
     Input_Reader input_reader("../source_input.txt");
@@ -46,7 +48,7 @@ int main()
         Input_Reader body_reader(Settings::body_file_path);
         body_reader.load_body_from_memory(); //Load body contour from point-file
         
-        /* Load Body from specified function
+        /* Load Body from specified function WIP
         std::vector<double> param;
         double steps = 200;
         for(unsigned int u = 0; u < steps; ++u)
@@ -65,6 +67,7 @@ int main()
     }
 
     sf::RenderWindow window(sf::VideoMode(Settings::window_size_x, Settings::window_size_y), "Potential-Flow", sf::Style::Default, Settings::graphic_settings);
+    
 
     while (window.isOpen() && Settings::max_frame-- != 0) //Set frame counter to negative number for infinite frames
     {
@@ -76,10 +79,26 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+            if (event.type == sf::Event::Closed) window.close();
+            else if(event.type == sf::Event::MouseWheelMoved) UserIO::update_zoom(event.mouseWheel.delta);
         }
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) Settings::coord_offset_x -= 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) Settings::coord_offset_x += 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) Settings::coord_offset_y -= 1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) Settings::coord_offset_y += 1;
+
+        //Update velocity and pressure field size depending on zoom and offset:
+        vec2d tmp1 = vec2d(Settings::display_size_x, Settings::display_size_y);
+        vec2d tmp2 = vec2d(Settings::coord_offset_x, Settings::coord_offset_y);
+
+        tmp1.x = tmp1.x * Settings::mtr_per_pxl_x;
+        tmp1.y = tmp1.y * Settings::mtr_per_pxl_y;
+
+        (*Scalar_Field::Scalar_Field_List[0]).update_position(tmp1, tmp2);
+        (*Vector_Field::Vector_Field_List[0]).update_position(tmp1, tmp2);
+        
+        //Clear Window for next frame
         window.clear();
 
         if(Settings::use_body){Body::Body_List[0]->calc_source_panel();} //Solve source panel distribution for body
@@ -87,35 +106,26 @@ int main()
         Physics::calc_velocity_field(*Vector_Field::Vector_Field_List[0]);
         Physics::calc_pressure_field(*Scalar_Field::Scalar_Field_List[0]);  //this is a relative pressure
 
-        //(*Scalar_Field::Scalar_Field_List[0]).draw_field(window, 10, 0.5); //Alternative way to visualize Pressure field
-        (*Scalar_Field::Scalar_Field_List[0]).draw_field_2(window, 1);
+        if(Settings::pressure_display_style == 0) (*Scalar_Field::Scalar_Field_List[0]).draw_field(window, 10, 0.5); //Alternative way to visualize Pressure field
+        else (*Scalar_Field::Scalar_Field_List[0]).draw_field_2(window, 1);
+        
         (*Vector_Field::Vector_Field_List[0]).draw_field(window, Settings::velocity_field_vector_scale, 1);
 
         Source::draw_sources(window);
         if(Settings::use_body){Body::Body_List[0]->draw_body(window);}
 
-        for(unsigned int u = 0; u < 15; ++u) //Calculates and draws stream lines
-        {
-            Physics::draw_streamline(window, Physics::integrate_streamline(100, 50 + u*28.5714, 700, Settings::streamline_step_size));
+        //Calculates and draws stream lines
+        vec2d tmp; tmp.x = 0;
+        double y_coord;
+        for(unsigned int u = 0; u < Settings::number_streamlines; ++u)
+        {   
+            tmp.y = ((Settings::display_size_y * u) / (Settings::number_streamlines - 1)) + Settings::display_offset_y;
+            y_coord = Mapping::pxl_to_coord(tmp).y;
+
+            Physics::draw_streamline(window, Physics::integrate_streamline(y_coord, Settings::streamline_step_size));
         }
 
-        //Print to GUI:
-        double num;
-        char num_char[15];
-        std::string text_str;
-
-        //Print angle of attack to screen (deg):
-        num = dynamic_cast<Uniform*>(Source::Source_List[0])->calc_angle() * (180/(M_PI));
-        sprintf(num_char, "%6.2f", num);
-        text_str = num_char;
-        text_str = "AOF: " + text_str + " deg";
-        Mapping::print_to_screen(window, text_str, 100, 15);
-
-        //Print net panel source strength
-        sprintf(num_char, "%6.4f", Body::Body_List[0]->net_source_strength);
-        text_str = num_char;
-        text_str = "Net-Panel-Source: " + text_str;
-        Mapping::print_to_screen(window, text_str, 200, 15);
+        UserIO::print_GUI(window);
 
         //Change uniform inflow every frame
         dynamic_cast<Uniform*>(Source::Source_List[0])->change_flow(); //Change y-component of uniform flow

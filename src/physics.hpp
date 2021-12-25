@@ -39,6 +39,7 @@ class Uniform: public Source
     void change_flow();
 };
 
+//Positive Intensity <--> Source
 class Point: public Source
 {
     public:
@@ -47,6 +48,7 @@ class Point: public Source
     void calc_velocity(const vec2d& coord) const;
 };
 
+//Positive Intensity <--> CW rotation
 class Vortex: public Source
 {
     public:
@@ -55,6 +57,7 @@ class Vortex: public Source
     void calc_velocity(const vec2d& coord) const;
 };
 
+//Positive Intensity <-->
 class Doublet: public Source
 {
     public:
@@ -68,7 +71,7 @@ class Physics
     public:
     static void get_velocity(const vec2d& coord);
 
-    static std::vector<vec2d> integrate_streamline(double x_start, double y_start, double x_end, double step);
+    static std::vector<vec2d> integrate_streamline(double y_start, double step_length);
     static void draw_streamline(sf::RenderWindow& window, std::vector<vec2d> pos_vec);
 
     static void calc_pressure_field(Scalar_Field& pfield, double rho = 1.0);
